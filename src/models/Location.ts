@@ -7,6 +7,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import LocationType from './LocationType';
 
 @Entity()
 export default class Location {
@@ -19,4 +20,11 @@ export default class Location {
 
   @Column({ nullable: false })
   title: string;
+
+  @Column({ nullable: false })
+  coordinates: string;
+
+  @OneToOne(() => LocationType)
+  @JoinColumn()
+  type: LocationType;
 }
