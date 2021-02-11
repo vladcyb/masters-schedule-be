@@ -1,7 +1,7 @@
 import express from 'express';
 import { createConnection } from 'typeorm';
-import 'reflect-metadata';
 import routes from './routes';
+import 'reflect-metadata';
 
 createConnection().then(async () => {
   const app = express();
