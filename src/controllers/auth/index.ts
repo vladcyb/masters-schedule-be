@@ -55,8 +55,8 @@ const register = async (req: Request, res: Response) => {
   }
 };
 
-const RegistrationController = {
+const AuthController = {
   register,
 };
 
-export default RegistrationController;
+export default AuthController;

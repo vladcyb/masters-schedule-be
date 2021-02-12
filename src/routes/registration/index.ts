@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import RegistrationController from '../../controllers/registration';
+import AuthController from '../../controllers/auth';
 
 const registrationRoutes = Router();
 
-registrationRoutes.post('/', RegistrationController.register);
+registrationRoutes.post('/', AuthController.register);
 
 export default registrationRoutes;
