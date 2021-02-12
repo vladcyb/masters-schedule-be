@@ -3,12 +3,10 @@
 import {
   Column,
   Entity,
-  JoinColumn,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Length } from 'class-validator';
-import UserRole from '../UserRole';
+import { UserRole } from './types';
 
 @Entity()
 export default class User {
@@ -31,7 +29,6 @@ export default class User {
   @Length(1)
   patronymic: string;
 
-  @OneToOne(() => UserRole)
-  @JoinColumn()
+  @Column({ nullable: false })
   role: UserRole;
 }
