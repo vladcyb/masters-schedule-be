@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
 import { validateRegister } from './validate';
@@ -30,10 +31,12 @@ const register = async (req: Request, res: Response) => {
       return;
     }
 
+    const salt = bcrypt.genSaltSync(12);
+
     const user = new User();
     user.role = role;
     user.login = login;
-    user.password = password;
+    user.password = bcrypt.hashSync(password, salt);
     user.surname = surname;
     user.name = name;
     user.patronymic = patronymic;
