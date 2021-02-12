@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { sendError } from '../../shared/sendError';
 import { UserRole } from '../../models/User/types';
 
-export const validateRegister = (res: Response, req: Request): boolean => {
+export const validateRegister = (req: Request, res: Response): boolean => {
   const {
     role,
     login,

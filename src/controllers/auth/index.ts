@@ -6,14 +6,16 @@ import { getConnection } from 'typeorm';
 import { validateRegister } from './validateRegistration';
 import User from '../../models/User';
 import { sendError } from '../../shared/sendError';
+import { SERVER_ERROR } from '../../shared/constants';
+import { validateLogin } from './validateLogin';
 
 const secretKey = fs.readFileSync('./src/private/secret');
 
-const register = async (req: Request, res: Response) => {
+const registerController = async (req: Request, res: Response) => {
   try {
     const users = getConnection()
       .getRepository(User);
-    if (!validateRegister(res, req)) {
+    if (!validateRegister(req, res)) {
       return;
     }
     const {
@@ -51,12 +53,47 @@ const register = async (req: Request, res: Response) => {
     });
     res.json({ ok: true, token });
   } catch (e) {
-    res.json({ ok: false, error: 'Server error' });
+    res.json({ ok: false, error: SERVER_ERROR });
+  }
+};
+
+const loginController = async (req: Request, res: Response) => {
+  try {
+    if (!validateLogin(req, res)) {
+      return;
+    }
+    const {
+      login,
+      password,
+    } = req.body;
+    const users = getConnection()
+      .getRepository(User);
+    const foundUser = await users.findOne({
+      where: {
+        login,
+      },
+    });
+    if (!foundUser) {
+      res.send(sendError('User not found'));
+      return;
+    }
+    if (bcrypt.compareSync(password, foundUser.password)) {
+      const salt = bcrypt.genSaltSync(12);
+      const passwordHash = bcrypt.hashSync(password, salt);
+      const token = jwt.sign({ password: passwordHash }, secretKey, {
+        expiresIn: '1h',
+      });
+      res.json({ ok: true, token });
+    }
+    res.json(sendError('Incorrect password!'));
+  } catch (e) {
+    res.json(sendError(SERVER_ERROR));
   }
 };
 
 const AuthController = {
-  register,
+  register: registerController,
+  login: loginController,
 };
 
 export default AuthController;
