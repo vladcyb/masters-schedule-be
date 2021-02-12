@@ -16,7 +16,9 @@
     ],
     "rules": {
         "linebreak-style": "off",
-        "import/extensions": "off"
+        "import/extensions": "off",
+        "object-curly-spacing": "warn",
+        "import/prefer-default-export": "off"
     },
     "settings": {
         "import/resolver": {
