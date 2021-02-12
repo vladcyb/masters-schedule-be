@@ -33,11 +33,11 @@ export default class Order {
   description: string;
 
   // дата начала
-  @Column({ nullable: false })
+  @Column()
   startDate: Date;
 
   // дата окончания
-  @Column({ nullable: false })
+  @Column()
   finishDate: Date;
 
   // статус
@@ -60,4 +60,8 @@ export default class Order {
   @OneToOne(() => ServiceList)
   @JoinColumn()
   serviceList: number;
+
+  // адрес
+  @Column({ nullable: false })
+  address: string;
 }
