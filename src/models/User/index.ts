@@ -13,26 +13,26 @@ export default class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ unique: true })
   @Length(3)
   login: string;
 
-  @Column({ nullable: false })
+  @Column()
   @Length(8)
   password: string;
 
-  @Column({ nullable: false })
+  @Column()
   @Length(1)
   surname: string;
 
-  @Column({ nullable: false })
+  @Column()
   @Length(1)
   name: string;
 
-  @Column({ nullable: false })
+  @Column()
   @Length(1)
   patronymic: string;
 
-  @Column({ nullable: false })
+  @Column()
   role: UserRole;
 }

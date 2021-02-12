@@ -18,9 +18,9 @@ export default class Schedule {
   @JoinColumn()
   master: Master;
 
-  @Column({ nullable: false })
+  @Column()
   hours: string;
 
-  @Column({ nullable: false })
+  @Column()
   status: number;
 }

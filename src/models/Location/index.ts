@@ -18,10 +18,10 @@ export default class Location {
   @JoinColumn()
   parent: Location;
 
-  @Column({ nullable: false })
+  @Column()
   title: string;
 
-  @Column({ nullable: false })
+  @Column()
   coordinates: string;
 
   @OneToOne(() => LocationType)

@@ -8,11 +8,11 @@ export default class Specialization {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false })
+  @Column()
   @Length(2, 20)
   title: string;
 
-  @Column({ nullable: false })
+  @Column()
   @Length(10, 200)
   icon: string;
 }

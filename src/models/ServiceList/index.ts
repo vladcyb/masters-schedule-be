@@ -10,13 +10,13 @@ export default class ServiceList {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false })
+  @Column()
   title: string;
 
-  @Column({ nullable: false })
+  @Column()
   price: string;
 
-  @Column({ nullable: false })
+  @Column()
   duration: number;
 
   @OneToOne(() => Specialization)
