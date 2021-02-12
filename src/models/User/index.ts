@@ -18,6 +18,10 @@ export default class User {
   login: string;
 
   @Column({ nullable: false })
+  @Length(8)
+  password: string;
+
+  @Column({ nullable: false })
   @Length(1)
   surname: string;
 
