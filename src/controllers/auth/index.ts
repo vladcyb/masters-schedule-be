@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import fs from 'fs';
 import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
-import { validateRegister } from './validate';
+import { validateRegister } from './validateRegistration';
 import User from '../../models/User';
 import { sendError } from '../../shared/sendError';
 
