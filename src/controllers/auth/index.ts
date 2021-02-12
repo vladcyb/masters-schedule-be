@@ -48,7 +48,7 @@ const registerController = async (req: Request, res: Response) => {
     user.name = name;
     user.patronymic = patronymic;
     await users.save(user);
-    const token = jwt.sign({ password: passwordHash }, secretKey, {
+    const token = jwt.sign({ id: user.id }, secretKey, {
       expiresIn: '1h',
     });
     res.json({ ok: true, token });
@@ -78,9 +78,7 @@ const loginController = async (req: Request, res: Response) => {
       return;
     }
     if (bcrypt.compareSync(password, foundUser.password)) {
-      const salt = bcrypt.genSaltSync(12);
-      const passwordHash = bcrypt.hashSync(password, salt);
-      const token = jwt.sign({ password: passwordHash }, secretKey, {
+      const token = jwt.sign({ id: foundUser.id }, secretKey, {
         expiresIn: '1h',
       });
       res.json({ ok: true, token });
