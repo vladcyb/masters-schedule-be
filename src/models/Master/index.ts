@@ -3,9 +3,9 @@
 import {
   Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
-import User from './User';
-import Location from './Location';
-import Specialization from './Specialization';
+import User from '../User';
+import Location from '../Location';
+import Specialization from '../Specialization';
 
 @Entity()
 export default class Master {

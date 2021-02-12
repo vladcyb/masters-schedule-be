@@ -7,10 +7,10 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import Master from './Master';
-import User from './User';
+import Master from '../Master';
+import User from '../User';
 import { OrderStatus } from './types';
-import ServiceList from './ServiceList';
+import ServiceList from '../ServiceList';
 
 @Entity()
 export default class Order {

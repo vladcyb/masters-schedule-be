@@ -7,7 +7,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import LocationType from './LocationType';
+import LocationType from '../LocationType';
 
 @Entity()
 export default class Location {

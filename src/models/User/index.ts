@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Length } from 'class-validator';
-import UserRole from './UserRole';
+import UserRole from '../UserRole';
 
 @Entity()
 export default class User {

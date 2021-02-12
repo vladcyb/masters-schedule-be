@@ -7,7 +7,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import Master from './Master';
+import Master from '../Master';
 
 @Entity()
 export default class Schedule {

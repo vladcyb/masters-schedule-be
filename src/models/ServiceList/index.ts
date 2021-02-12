@@ -3,7 +3,7 @@
 import {
   Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
-import Specialization from './Specialization';
+import Specialization from '../Specialization';
 
 @Entity()
 export default class ServiceList {
