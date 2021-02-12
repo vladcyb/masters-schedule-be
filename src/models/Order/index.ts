@@ -53,8 +53,8 @@ export default class Order {
   comment: string;
 
   // фотографии
-  @Column()
-  photos: string; // TODO
+  @Column({ nullable: false })
+  photo: string;
 
   // каталог услуг
   @OneToOne(() => ServiceList)
