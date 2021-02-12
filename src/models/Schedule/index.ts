@@ -19,7 +19,7 @@ export default class Schedule {
   master: Master;
 
   @Column({ nullable: false })
-  hours: string; // TODO
+  hours: string;
 
   @Column({ nullable: false })
   status: number;

@@ -4,6 +4,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -24,36 +25,36 @@ export default class Order {
   master: Master;
 
   // ID клиента
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   @JoinColumn()
   client: User;
 
   // описание
-  @Column({ nullable: false })
+  @Column()
   description: string;
 
   // дата начала
-  @Column()
+  @Column({ nullable: true })
   startDate: Date;
 
   // дата окончания
-  @Column()
+  @Column({ nullable: true })
   finishDate: Date;
 
   // статус
-  @Column({ nullable: false })
+  @Column()
   status: OrderStatus;
 
   // цвет статуса
-  @Column({ nullable: false })
+  @Column()
   statusColor: string;
 
   // комментарий
-  @Column()
+  @Column({ nullable: true })
   comment: string;
 
   // фотографии
-  @Column({ nullable: false })
+  @Column()
   photo: string;
 
   // каталог услуг
@@ -62,6 +63,6 @@ export default class Order {
   serviceList: number;
 
   // адрес
-  @Column({ nullable: false })
+  @Column()
   address: string;
 }
