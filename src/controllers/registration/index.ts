@@ -1,9 +1,13 @@
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import fs from 'fs';
 import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
 import { validateRegister } from './validate';
 import User from '../../models/User';
 import { sendError } from '../../shared/sendError';
+
+const secretKey = fs.readFileSync('./src/private/secret');
 
 const register = async (req: Request, res: Response) => {
   try {
@@ -32,16 +36,20 @@ const register = async (req: Request, res: Response) => {
     }
 
     const salt = bcrypt.genSaltSync(12);
+    const passwordHash = bcrypt.hashSync(password, salt);
 
     const user = new User();
     user.role = role;
     user.login = login;
-    user.password = bcrypt.hashSync(password, salt);
+    user.password = passwordHash;
     user.surname = surname;
     user.name = name;
     user.patronymic = patronymic;
     await users.save(user);
-    res.json({ ok: true });
+    const token = jwt.sign({ password: passwordHash }, secretKey, {
+      expiresIn: '1h',
+    });
+    res.json({ ok: true, token });
   } catch (e) {
     res.json({ ok: false, error: 'Server error' });
   }
