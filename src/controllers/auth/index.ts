@@ -1,20 +1,25 @@
-import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
+import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
-import { validateRegister } from './validateRegistration';
 import User from '../../models/User';
+import Location from '../../models/Location';
+import Specialization from '../../models/Specialization';
+import { validateRegister } from './validateRegistration';
 import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
 import { validateLogin } from './validateLogin';
+import { UserRole } from '../../models/User/types';
 
 const secretKey = fs.readFileSync('./src/private/secret');
 
 const registerController = async (req: Request, res: Response) => {
   try {
-    const users = getConnection()
-      .getRepository(User);
+    const connection = getConnection();
+    const users = connection.getRepository(User);
+    const locations = connection.getRepository(Location);
+    const specializations = connection.getRepository(Specialization);
     if (!validateRegister(req, res)) {
       return;
     }
@@ -25,16 +30,41 @@ const registerController = async (req: Request, res: Response) => {
       surname,
       name,
       patronymic,
+      locationId,
+      specializationId,
     } = req.body;
+    // Проверка на существование пользователя с таким паролем
     const foundUser = await users.findOne({
       where: {
         login,
       },
     });
-
     if (foundUser) {
       res.json(sendError('`login` is already taken!'));
       return;
+    }
+    if (role === UserRole.MASTER) {
+      // проверка на существование локации
+      const foundLocation = await locations.findOne({
+        where: {
+          id: locationId,
+        },
+      });
+      if (!foundLocation) {
+        res.json(sendError('Location not found!'));
+        return;
+      }
+
+      // проверка на существование специализации
+      const foundSpecialization = await specializations.findOne({
+        where: {
+          id: specializationId,
+        },
+      });
+      if (!foundSpecialization) {
+        res.json(sendError('Specialization not found!'));
+        return;
+      }
     }
 
     const salt = bcrypt.genSaltSync(12);
