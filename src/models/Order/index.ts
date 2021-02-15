@@ -45,10 +45,6 @@ export default class Order {
   @Column()
   status: OrderStatus;
 
-  // цвет статуса
-  @Column()
-  statusColor: string;
-
   // комментарий
   @Column({ nullable: true })
   comment: string;

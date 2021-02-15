@@ -56,7 +56,6 @@ const createOrder = async (req: Request, res: Response) => {
     order.client = clientId;
     order.status = OrderStatus.PENDING;
     order.service = service;
-    order.statusColor = 'green';
     await orders.save(order);
     res.json({ ok: true });
   } catch (e) {
