@@ -11,6 +11,7 @@ createConnection().then(async () => {
 
   app.use(express.json());
   app.use(routes);
+
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     if (err.name === 'UnauthorizedError') {
       res.status(401).json(sendError('Unauthorized!'));
