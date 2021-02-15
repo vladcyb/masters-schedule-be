@@ -7,7 +7,7 @@ import { SERVER_ERROR } from '../../shared/constants';
 import Order from '../../models/Order';
 import { OrderStatus } from '../../models/Order/types';
 import { UserRole } from '../../models/User/types';
-import ServiceList from '../../models/ServiceList';
+import Service from '../../models/Service';
 
 const createOrder = async (req: Request, res: Response) => {
   try {
@@ -17,7 +17,7 @@ const createOrder = async (req: Request, res: Response) => {
     const connection = getConnection();
     const users = connection.getRepository(User);
     const orders = connection.getRepository(Order);
-    const services = connection.getRepository(ServiceList);
+    const services = connection.getRepository(Service);
     const {
       description,
       address,

@@ -11,7 +11,7 @@ import {
 import Master from '../Master';
 import User from '../User';
 import { OrderStatus } from './types';
-import ServiceList from '../ServiceList';
+import Service from '../Service';
 
 @Entity()
 export default class Order {
@@ -54,7 +54,7 @@ export default class Order {
   photo: string;
 
   // каталог услуг
-  @OneToOne(() => ServiceList)
+  @OneToOne(() => Service)
   @JoinColumn()
   service: number;
 

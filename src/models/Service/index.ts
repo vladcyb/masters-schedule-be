@@ -1,12 +1,12 @@
 // каталог услуг
 
 import {
-  Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn,
+  Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
 import Specialization from '../Specialization';
 
 @Entity()
-export default class ServiceList {
+export default class Service {
   // ID
   @PrimaryGeneratedColumn()
   id: number;
@@ -24,7 +24,7 @@ export default class ServiceList {
   duration: number;
 
   // специализация
-  @OneToOne(() => Specialization)
+  @ManyToOne(() => Specialization)
   @JoinColumn()
   specialization: Specialization;
 }
