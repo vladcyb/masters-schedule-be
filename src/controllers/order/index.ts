@@ -6,6 +6,7 @@ import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
 import Order from '../../models/Order';
 import { OrderStatus } from '../../models/Order/types';
+import { UserRole } from '../../models/User/types';
 
 const createOrder = async (req: Request, res: Response) => {
   try {
@@ -29,6 +30,10 @@ const createOrder = async (req: Request, res: Response) => {
     });
     if (!user) {
       res.status(401).json(sendError('Unauthorized!'));
+      return;
+    }
+    if (user.role !== UserRole.CLIENT) {
+      res.json(sendError('Only client may create orders.'));
       return;
     }
     const order = new Order();
