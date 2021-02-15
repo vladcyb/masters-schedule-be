@@ -7,6 +7,6 @@ export default class LocationType {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false, unique: true })
+  @Column({ unique: true })
   title: string;
 }
