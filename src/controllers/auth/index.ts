@@ -11,6 +11,7 @@ import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
 import { validateLogin } from './validateLogin';
 import { UserRole } from '../../models/User/types';
+import Master from '../../models/Master';
 
 const secretKey = fs.readFileSync('./src/private/secret');
 
@@ -20,6 +21,7 @@ const registerController = async (req: Request, res: Response) => {
     const users = connection.getRepository(User);
     const locations = connection.getRepository(Location);
     const specializations = connection.getRepository(Specialization);
+    const masters = connection.getRepository(Master);
     if (!validateRegister(req, res)) {
       return;
     }
@@ -78,11 +80,19 @@ const registerController = async (req: Request, res: Response) => {
     user.name = name;
     user.patronymic = patronymic;
     await users.save(user);
+    if (role === UserRole.MASTER) {
+      const master = new Master();
+      master.user = user;
+      master.specialization = specializationId;
+      master.location = locationId;
+      await masters.save(master);
+    }
     const token = jwt.sign({ id: user.id }, secretKey, {
       expiresIn: '1h',
     });
     res.json({ ok: true, token });
   } catch (e) {
+    console.log(e);
     res.json({ ok: false, error: SERVER_ERROR });
   }
 };
