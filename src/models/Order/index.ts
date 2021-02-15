@@ -60,7 +60,7 @@ export default class Order {
   // каталог услуг
   @OneToOne(() => ServiceList)
   @JoinColumn()
-  serviceList: number;
+  service: number;
 
   // адрес
   @Column()

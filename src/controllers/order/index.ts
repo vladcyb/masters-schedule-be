@@ -7,6 +7,7 @@ import { SERVER_ERROR } from '../../shared/constants';
 import Order from '../../models/Order';
 import { OrderStatus } from '../../models/Order/types';
 import { UserRole } from '../../models/User/types';
+import ServiceList from '../../models/ServiceList';
 
 const createOrder = async (req: Request, res: Response) => {
   try {
@@ -16,11 +17,12 @@ const createOrder = async (req: Request, res: Response) => {
     const connection = getConnection();
     const users = connection.getRepository(User);
     const orders = connection.getRepository(Order);
+    const services = connection.getRepository(ServiceList);
     const {
       description,
       address,
       photo,
-      services,
+      service,
     } = req.body;
     const { id: clientId } = (req as any).user;
     const user = await users.findOne({
@@ -36,14 +38,25 @@ const createOrder = async (req: Request, res: Response) => {
       res.json(sendError('Only client may create orders.'));
       return;
     }
+    if (typeof service !== 'undefined') {
+      const foundService = await services.findOne({
+        where: {
+          id: service,
+        },
+      });
+      if (!foundService) {
+        res.json(sendError(`Service with id=${service} not found!`));
+        return;
+      }
+    }
     const order = new Order();
     order.address = address;
     order.description = description;
     order.photo = photo;
     order.client = clientId;
     order.status = OrderStatus.PENDING;
+    order.service = service;
     order.statusColor = 'green';
-    // TODO: добавить список услуг
     await orders.save(order);
     res.json({ ok: true });
   } catch (e) {
