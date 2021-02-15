@@ -3,8 +3,10 @@ import express, { NextFunction, Request, Response } from 'express';
 import { createConnection } from 'typeorm';
 import routes from './routes';
 import { sendError } from './shared/sendError';
+import { initializeLocationTypes } from './models/LocationType/initialize';
 
 createConnection().then(async () => {
+  initializeLocationTypes();
   const app = express();
 
   app.use(express.json());
