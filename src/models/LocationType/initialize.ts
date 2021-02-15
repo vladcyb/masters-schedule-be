@@ -7,9 +7,9 @@ export const initializeLocationTypes = async () => {
   const l1 = new LocationType();
   const l2 = new LocationType();
   const l3 = new LocationType();
-  l1.title = 'Область';
-  l2.title = 'Город';
-  l3.title = 'Улица';
+  l1.title = 'Region';
+  l2.title = 'City';
+  l3.title = 'Street';
   try {
     await locationTypes.save(l1);
     await locationTypes.save(l2);

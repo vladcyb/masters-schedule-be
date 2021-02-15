@@ -4,6 +4,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -24,7 +25,7 @@ export default class Location {
   @Column()
   coordinates: string;
 
-  @OneToOne(() => LocationType)
+  @ManyToOne(() => LocationType)
   @JoinColumn()
   type: LocationType;
 }
