@@ -13,12 +13,14 @@ const secret = fs.readFileSync(`${__dirname}/../private/secret`);
 
 const routes = Router();
 
+const jwtMiddleware = ejwt({ secret, algorithms: ['HS256'] });
+
 routes.use('/register', registrationRoutes);
 routes.use('/login', loginRoutes);
-routes.use('/order', ejwt({ secret, algorithms: ['HS256'] }), orderRoutes);
-routes.use('/location', ejwt({ secret, algorithms: ['HS256'] }), locationRoutes);
-routes.use('/specialization', ejwt({ secret, algorithms: ['HS256'] }), specializationRoutes);
-routes.use('/service', ejwt({ secret, algorithms: ['HS256'] }), serviceRoutes);
-routes.use('/master', ejwt({ secret, algorithms: ['HS256'] }), masterRoutes);
+routes.use('/order', jwtMiddleware, orderRoutes);
+routes.use('/location', jwtMiddleware, locationRoutes);
+routes.use('/specialization', jwtMiddleware, specializationRoutes);
+routes.use('/service', jwtMiddleware, serviceRoutes);
+routes.use('/master', jwtMiddleware, masterRoutes);
 
 export default routes;
