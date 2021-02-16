@@ -73,15 +73,16 @@ const registerController = async (req: Request, res: Response) => {
         const passwordHash = bcrypt.hashSync(password, salt);
 
         const user = new User();
-        const token = jwt.sign({ id: user.id }, SECRET, {
-          expiresIn: '1h',
-        });
         user.role = role;
         user.login = login;
         user.password = passwordHash;
         user.surname = surname;
         user.name = name;
         user.patronymic = patronymic;
+        await manager.save(user);
+        const token = jwt.sign({ id: user.id }, SECRET, {
+          expiresIn: '1h',
+        });
         user.token = token;
         await manager.save(user);
         if (role === UserRole.MASTER) {
