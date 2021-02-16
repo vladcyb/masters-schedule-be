@@ -8,7 +8,7 @@ export default class Specialization {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   @Length(2, 20)
   title: string;
 

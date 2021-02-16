@@ -22,6 +22,15 @@ const create = async (req: Request, res: Response) => {
       res.json(sendError('Only admin can create specialization!'));
       return;
     }
+    const found = await specializations.findOne({
+      where: {
+        title,
+      },
+    });
+    if (found) {
+      res.json(sendError(`Specialization with title='${title}' exists!`));
+      return;
+    }
     const spec = new Specialization();
     spec.title = title;
     spec.icon = icon;
