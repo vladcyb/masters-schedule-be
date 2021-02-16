@@ -1,67 +1,62 @@
 import { Request, Response } from 'express';
-import { getConnection } from 'typeorm';
-import User from '../../models/User';
-import Schedule from '../../models/Schedule';
+import { getManager } from 'typeorm';
 import { sendError } from '../../shared/sendError';
-import { SERVER_ERROR } from '../../shared/constants';
-import { UserRole } from '../../models/User/types';
+import User from '../../models/User';
 import Master from '../../models/Master';
+import Schedule from '../../models/Schedule';
+import { UserRole } from '../../models/User/types';
+import { SERVER_ERROR } from '../../shared/constants';
+import { validateSetMasterSchedule } from './validate';
 
 const setSchedule = async (req: Request, res: Response) => {
+  let result;
   try {
-    const connection = getConnection();
-    const users = connection.getRepository(User);
-    const masters = connection.getRepository(Master);
-    const schedules = connection.getRepository(Schedule);
-    const {
-      hours,
-    } = req.body;
-    const {
-      user: {
-        id,
-      },
-    } = req as any;
-    const user = await users.findOne({
-      where: {
-        id,
-      },
-    });
-    const master = await masters.findOne({
-      where: {
-        user,
-      },
-    });
-    const schedule = await schedules.findOne({
-      where: {
-        master,
-      },
-    });
-    if (!user) {
-      res.json({ ok: false, error: 'Unauthorized!' });
-      return;
-    }
-    if (user.role !== UserRole.MASTER) {
-      res.json(sendError('Access denied!'));
-      return;
-    }
-    if (typeof hours === 'undefined') {
-      res.json(sendError('Enter `hours`!'));
-      return;
-    }
-    if (typeof hours !== 'string') {
-      res.json(sendError('`hours` must be of type string'));
-      return;
-    }
-    console.log(master);
-    const result = await schedules.save({
-      ...schedule,
-      hours,
-    });
-    res.json({ ok: true, result });
+    result = await getManager()
+      .transaction(async (manager) => {
+        const { hours } = req.body;
+        const { id } = (req as any).user;
+        const user = await manager.findOne(User, {
+          where: { id },
+        });
+        const master = await manager.findOne(Master, {
+          where: { user },
+        });
+        const schedule = await manager.findOne(Schedule, {
+          where: { master },
+        });
+        if (!user) {
+          res.json({
+            ok: false,
+            error: 'Unauthorized!',
+          });
+          return;
+        }
+        // Проверка прав доступа
+        if (user.role !== UserRole.MASTER) {
+          res.json(sendError('Access denied!'));
+          return;
+        }
+        // Валидация
+        if (!validateSetMasterSchedule(req, res)) {
+          return;
+        }
+        const transactionResult = await manager.save(Schedule, {
+          ...schedule,
+          hours,
+        });
+        // eslint-disable-next-line consistent-return
+        return transactionResult;
+      });
   } catch (e) {
-    res.json(sendError(SERVER_ERROR));
-    console.log(e);
+    res.json({
+      ok: false,
+      error: SERVER_ERROR,
+    });
   }
+  res.json({
+    ok: true,
+    result,
+  });
 };
 
 const masterController = {
