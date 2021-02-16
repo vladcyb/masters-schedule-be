@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { getManager } from 'typeorm';
 import { sendError } from '../../shared/sendError';
-import User from '../../models/User';
 import Master from '../../models/Master';
 import Schedule from '../../models/Schedule';
 import { UserRole } from '../../models/User/types';
@@ -14,10 +13,7 @@ const setSchedule = async (req: Request, res: Response) => {
     result = await getManager()
       .transaction(async (manager) => {
         const { hours } = req.body;
-        const { id } = (req as any).user;
-        const user = await manager.findOne(User, {
-          where: { id },
-        });
+        const { user } = req as any;
         const master = await manager.findOne(Master, {
           where: { user },
         });

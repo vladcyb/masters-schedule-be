@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
+import Specialization from '../../models/Specialization';
 import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
 import { validateCreateSpecialization } from './validate';
-import Specialization from '../../models/Specialization';
-import User from '../../models/User';
 import { UserRole } from '../../models/User/types';
 
 const create = async (req: Request, res: Response) => {
@@ -12,23 +11,13 @@ const create = async (req: Request, res: Response) => {
     if (!validateCreateSpecialization(req, res)) {
       return;
     }
-    const {
-      user: {
-        id: userId,
-      },
-    } = req as any;
+    const { user } = req as any;
     const {
       title,
       icon,
     } = req.body;
     const connection = getConnection();
     const specializations = connection.getRepository(Specialization);
-    const users = connection.getRepository(User);
-    const user = await users.findOne({
-      where: {
-        id: userId,
-      },
-    });
     if (user.role !== UserRole.ADMIN) {
       res.json(sendError('Only admin can create specialization!'));
       return;

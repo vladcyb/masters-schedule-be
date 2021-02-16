@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
-import User from '../../models/User';
 import Service from '../../models/Service';
 import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
@@ -23,14 +22,9 @@ const create = async (req: Request, res: Response) => {
       duration,
       specializationId,
     } = req.body;
+    const { user } = req as any;
     const connection = getConnection();
-    const users = connection.getRepository(User);
     const services = connection.getRepository(Service);
-    const user = await users.findOne({
-      where: {
-        id: userId,
-      },
-    });
     if (user.role !== UserRole.ADMIN) {
       res.json(sendError('Only admin may create services!'));
       return;

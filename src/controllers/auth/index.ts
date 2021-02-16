@@ -35,7 +35,7 @@ const registerController = async (req: Request, res: Response) => {
         if (!validateRegister(req, res)) {
           return;
         }
-        // Проверка на существование пользователя с таким паролем
+        // Проверка на существование пользователя с таким логином
         const foundUser = await manager.findOne(User, {
           where: {
             login,

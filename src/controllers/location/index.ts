@@ -5,7 +5,6 @@ import Location from '../../models/Location';
 import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
 import { validateCreateLocation } from './validateCreateLocation';
-import User from '../../models/User';
 import { UserRole } from '../../models/User/types';
 
 const create = async (req: Request, res: Response) => {
@@ -19,19 +18,10 @@ const create = async (req: Request, res: Response) => {
       coordinates,
       typeId,
     } = req.body;
-    const {
-      user: { id: userId },
-    } = req as any;
+    const { user } = req as any;
     const connection = getConnection();
     const locationsTypes = connection.getRepository(LocationType);
     const locations = connection.getRepository(Location);
-    const users = connection.getRepository(User);
-
-    const user = await users.findOne({
-      where: {
-        id: userId,
-      },
-    });
     if (user.role !== UserRole.ADMIN) {
       res.send(sendError('Only admin can create location!'));
       return;
