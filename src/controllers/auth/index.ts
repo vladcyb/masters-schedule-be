@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import fs from 'fs';
+import dotenv from 'dotenv';
 import { Request, Response } from 'express';
 import { getManager } from 'typeorm';
 import User from '../../models/User';
@@ -15,7 +15,8 @@ import { validateLogin } from './validateLogin';
 import { UserRole } from '../../models/User/types';
 import { MasterStatus } from '../../models/Order/enums';
 
-const secretKey = fs.readFileSync('./src/private/secret');
+dotenv.config();
+const { SECRET } = process.env;
 
 const registerController = async (req: Request, res: Response) => {
   const {
@@ -72,7 +73,7 @@ const registerController = async (req: Request, res: Response) => {
         const passwordHash = bcrypt.hashSync(password, salt);
 
         const user = new User();
-        const token = jwt.sign({ id: user.id }, secretKey, {
+        const token = jwt.sign({ id: user.id }, SECRET, {
           expiresIn: '1h',
         });
         user.role = role;
@@ -128,7 +129,7 @@ const loginController = async (req: Request, res: Response) => {
           return;
         }
         if (bcrypt.compareSync(password, user.password)) {
-          token = jwt.sign({ id: user.id }, secretKey, {
+          token = jwt.sign({ id: user.id }, SECRET, {
             expiresIn: '1h',
           });
           await manager.save(User, {
@@ -141,6 +142,7 @@ const loginController = async (req: Request, res: Response) => {
         res.json(sendError('Incorrect password!'));
       });
   } catch (e) {
+    console.log(e);
     res.json(sendError(SERVER_ERROR));
   } finally {
     if (!res.finished) {
