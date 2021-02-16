@@ -5,7 +5,7 @@ import User from '../../models/User';
 import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
 import Order from '../../models/Order';
-import { OrderStatus } from '../../models/Order/types';
+import { OrderStatus } from '../../models/Order/enums';
 import { UserRole } from '../../models/User/types';
 import Service from '../../models/Service';
 

@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import Master from '../Master';
+import { MasterStatus } from '../Order/enums';
 
 @Entity()
 export default class Schedule {
@@ -22,5 +23,5 @@ export default class Schedule {
   hours: string;
 
   @Column()
-  status: number;
+  status: MasterStatus;
 }

@@ -12,6 +12,8 @@ import { SERVER_ERROR } from '../../shared/constants';
 import { validateLogin } from './validateLogin';
 import { UserRole } from '../../models/User/types';
 import Master from '../../models/Master';
+import Schedule from '../../models/Schedule';
+import { MasterStatus } from '../../models/Order/enums';
 
 const secretKey = fs.readFileSync('./src/private/secret');
 
@@ -22,6 +24,7 @@ const registerController = async (req: Request, res: Response) => {
     const locations = connection.getRepository(Location);
     const specializations = connection.getRepository(Specialization);
     const masters = connection.getRepository(Master);
+    const schedules = connection.getRepository(Schedule);
     if (!validateRegister(req, res)) {
       return;
     }
@@ -86,6 +89,11 @@ const registerController = async (req: Request, res: Response) => {
       master.specialization = specializationId;
       master.location = locationId;
       await masters.save(master);
+      const schedule = new Schedule();
+      schedule.status = MasterStatus.IDLE;
+      schedule.master = master;
+      schedule.hours = '';
+      await schedules.save(schedule);
     }
     const token = jwt.sign({ id: user.id }, secretKey, {
       expiresIn: '1h',

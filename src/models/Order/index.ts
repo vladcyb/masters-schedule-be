@@ -8,10 +8,10 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import Service from '../Service';
 import Master from '../Master';
 import User from '../User';
-import { OrderStatus } from './types';
-import Service from '../Service';
+import { OrderStatus } from './enums';
 
 @Entity()
 export default class Order {

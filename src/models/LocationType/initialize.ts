@@ -4,13 +4,22 @@ import LocationType from './index';
 export const initializeLocationTypes = async () => {
   const connection = getConnection();
   const locationTypes = connection.getRepository(LocationType);
-  const l1 = new LocationType();
-  const l2 = new LocationType();
-  const l3 = new LocationType();
-  l1.title = 'Region';
-  l2.title = 'City';
-  l3.title = 'District';
-  locationTypes.save(l1);
-  locationTypes.save(l2);
-  locationTypes.save(l3);
+  const locationType1 = new LocationType();
+  const locationType2 = new LocationType();
+  const locationType3 = new LocationType();
+  locationType1.title = 'Region';
+  locationType2.title = 'City';
+  locationType3.title = 'District';
+  try {
+    await locationTypes.save(locationType1);
+    // eslint-disable-next-line no-empty
+  } catch (e) {}
+  try {
+    await locationTypes.save(locationType2);
+    // eslint-disable-next-line no-empty
+  } catch (e) {}
+  try {
+    await locationTypes.save(locationType3);
+    // eslint-disable-next-line no-empty
+  } catch (e) {}
 };
