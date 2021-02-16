@@ -100,7 +100,7 @@ const registerController = async (req: Request, res: Response) => {
       });
   } catch (e) {
     console.log(e);
-    res.json({
+    res.status(500).json({
       ok: false,
       error: SERVER_ERROR,
     });
@@ -143,7 +143,7 @@ const loginController = async (req: Request, res: Response) => {
       });
   } catch (e) {
     console.log(e);
-    res.json(sendError(SERVER_ERROR));
+    res.status(500).json(sendError(SERVER_ERROR));
   } finally {
     if (!res.finished) {
       res.json({

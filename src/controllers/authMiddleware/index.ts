@@ -11,7 +11,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
     const auth = req.headers.authorization;
     const token = auth && auth.split(' ')[1];
     if (!token) {
-      res.status(401).json({ ok: false, error: 'Unauthorized' });
+      res.status(401).json(sendError('Unauthorized'));
       return;
     }
     const payload = jwt.verify(token, SECRET);
@@ -25,11 +25,11 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
           },
         });
       if (!user || user.token !== token) {
-        res.json(sendError('Unauthorized'));
+        res.status(401).json(sendError('Unauthorized'));
         return;
       }
     } catch (e) {
-      res.json(sendError(SERVER_ERROR));
+      res.status(500).json(sendError(SERVER_ERROR));
       return;
     }
     (req as any).user = {

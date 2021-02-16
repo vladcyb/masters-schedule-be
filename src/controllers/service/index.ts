@@ -44,7 +44,7 @@ const create = async (req: Request, res: Response) => {
     res.json({ ok: true, result });
   } catch (e) {
     console.log(e);
-    res.json(sendError(SERVER_ERROR));
+    res.status(500).json(sendError(SERVER_ERROR));
   }
 };
 

@@ -25,15 +25,12 @@ const setSchedule = async (req: Request, res: Response) => {
           where: { master },
         });
         if (!user) {
-          res.json({
-            ok: false,
-            error: 'Unauthorized!',
-          });
+          res.status(401).json(sendError('Unauthorized'));
           return;
         }
         // Проверка прав доступа
         if (user.role !== UserRole.MASTER) {
-          res.json(sendError('Access denied!'));
+          res.status(403).json(sendError('Access denied!'));
           return;
         }
         // Валидация
@@ -48,7 +45,7 @@ const setSchedule = async (req: Request, res: Response) => {
         return transactionResult;
       });
   } catch (e) {
-    res.json({
+    res.status(500).json({
       ok: false,
       error: SERVER_ERROR,
     });
