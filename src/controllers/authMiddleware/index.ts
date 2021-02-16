@@ -28,13 +28,11 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
         res.status(401).json(sendError('Unauthorized'));
         return;
       }
+      (req as any).user = user;
     } catch (e) {
       res.status(500).json(sendError(SERVER_ERROR));
       return;
     }
-    (req as any).user = {
-      id,
-    };
     next();
   } catch (e) {
     res.status(401).json(sendError('Unauthorized'));
