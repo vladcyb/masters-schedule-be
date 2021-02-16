@@ -35,4 +35,7 @@ export default class User {
 
   @Column()
   role: UserRole;
+
+  @Column({ nullable: true })
+  token: string;
 }
