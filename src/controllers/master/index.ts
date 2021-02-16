@@ -52,6 +52,7 @@ const setSchedule = async (req: Request, res: Response) => {
       ok: false,
       error: SERVER_ERROR,
     });
+    return;
   }
   res.json({
     ok: true,
