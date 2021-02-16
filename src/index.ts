@@ -2,11 +2,11 @@ import 'reflect-metadata';
 import express, { NextFunction, Request, Response } from 'express';
 import { createConnection } from 'typeorm';
 import routes from './routes';
-import { sendError } from './shared/sendError';
 import { initializeLocationTypes } from './models/LocationType/initialize';
+import { sendError } from './shared/sendError';
 
 createConnection().then(async () => {
-  initializeLocationTypes();
+  await initializeLocationTypes();
   const app = express();
 
   app.use(express.json());
