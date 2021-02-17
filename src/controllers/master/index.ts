@@ -12,7 +12,7 @@ const setSchedule = async (req: Request, res: Response) => {
   try {
     result = await getManager()
       .transaction(async (manager) => {
-        const { hours } = req.body;
+        const hours = req.body.hours.replace(/\s/g, '');
         const { user } = req as any;
         const master = await manager.findOne(Master, {
           where: { user },
