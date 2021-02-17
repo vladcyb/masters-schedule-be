@@ -38,3 +38,16 @@ export const validateCreateOrder = (req: Request, res: Response): boolean => {
   }
   return true;
 };
+
+export const validateAbortOrder = (req: Request, res: Response): boolean => {
+  const { id } = req.body;
+  if (typeof id === 'undefined') {
+    res.json(sendError('Enter order `id`!'));
+    return false;
+  }
+  if (typeof id !== 'number') {
+    res.json(sendError('`id` must be of type number!'));
+    return false;
+  }
+  return true;
+};
