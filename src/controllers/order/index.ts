@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
 import Order from '../../models/Order';
 import Service from '../../models/Service';
-import { validateAbortOrder, validateCreateOrder } from './validate';
+import { validateSetOrderStatus, validateCreateOrder } from './validate';
 import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
 import { OrderStatus } from '../../models/Order/enums';
@@ -53,10 +53,10 @@ const createOrder = async (req: Request, res: Response) => {
   }
 };
 
-const abortOrder = async (req: Request, res: Response) => {
+const setOrderStatus = async (req: Request, res: Response) => {
   const { user } = req as any;
-  const { id } = req.body;
-  if (!validateAbortOrder(req, res)) {
+  const { id, status } = req.body;
+  if (!validateSetOrderStatus(req, res)) {
     return;
   }
   try {
@@ -75,7 +75,7 @@ const abortOrder = async (req: Request, res: Response) => {
       res.status(403).json({ ok: false, error: 'It\'s not your order!' });
       return;
     }
-    order.status = OrderStatus.ABORTED;
+    order.status = status;
     await orders.save(order);
     res.json({ ok: true });
   } catch (e) {
@@ -85,8 +85,8 @@ const abortOrder = async (req: Request, res: Response) => {
 };
 
 const orderController = {
-  abortOrder,
   createOrder,
+  setOrderStatus,
 };
 
 export default orderController;

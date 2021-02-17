@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { sendError } from '../../shared/sendError';
+import { OrderStatus } from '../../models/Order/enums';
 
 export const validateCreateOrder = (req: Request, res: Response): boolean => {
   const {
@@ -39,14 +40,26 @@ export const validateCreateOrder = (req: Request, res: Response): boolean => {
   return true;
 };
 
-export const validateAbortOrder = (req: Request, res: Response): boolean => {
-  const { id } = req.body;
+export const validateSetOrderStatus = (req: Request, res: Response): boolean => {
+  const { id, status } = req.body;
   if (typeof id === 'undefined') {
     res.json(sendError('Enter order `id`!'));
     return false;
   }
   if (typeof id !== 'number') {
     res.json(sendError('`id` must be of type number!'));
+    return false;
+  }
+  if (typeof status === 'undefined') {
+    res.json(sendError('Enter order `status`!'));
+    return false;
+  }
+  if (typeof status !== 'number') {
+    res.json(sendError('Order `status` must be of type number!'));
+    return false;
+  }
+  if (!(status in OrderStatus)) {
+    res.json(sendError(`${status} is not valid status`));
     return false;
   }
   return true;
