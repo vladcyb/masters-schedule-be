@@ -4,7 +4,7 @@ import LocationType from '../../models/LocationType';
 import Location from '../../models/Location';
 import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
-import { validateCreateLocation } from './validateCreateLocation';
+import { validateCreateLocation } from './validate';
 import { UserRole } from '../../models/User/types';
 
 const create = async (req: Request, res: Response) => {

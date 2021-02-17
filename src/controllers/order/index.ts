@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
+import Order from '../../models/Order';
+import Service from '../../models/Service';
 import { validateAbortOrder, validateCreateOrder } from './validate';
 import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
-import Order from '../../models/Order';
-import Service from '../../models/Service';
 import { OrderStatus } from '../../models/Order/enums';
 import { UserRole } from '../../models/User/types';
 
