@@ -3,12 +3,12 @@ import { getConnection } from 'typeorm';
 import Order from '../../models/Order';
 import { UserRole } from '../../models/User/types';
 import { sendError } from '../../shared/sendError';
-import { SERVER_ERROR } from '../../shared/constants';
+import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 
 const getOrders = async (req: Request, res: Response) => {
   const { user } = (req as any);
   if (user.role !== UserRole.CLIENT) {
-    res.status(403).json(sendError('Forbidden!'));
+    res.status(403).json(sendError(FORBIDDEN));
     return;
   }
   try {

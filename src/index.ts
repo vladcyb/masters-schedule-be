@@ -16,15 +16,6 @@ createConnection().then(async () => {
   }));
   app.use(cookieParser());
 
-  // ===============
-  // TODO: DELETE ==
-  // ===============
-  app.use((req, res, next) => {
-    console.log(req.cookies.token);
-    next();
-  });
-  // ===============
-
   app.use(express.json());
   app.use(routes);
 

@@ -4,7 +4,7 @@ import { sendError } from '../../shared/sendError';
 import Master from '../../models/Master';
 import Schedule from '../../models/Schedule';
 import { UserRole } from '../../models/User/types';
-import { SERVER_ERROR } from '../../shared/constants';
+import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 import { validateSetMasterSchedule } from './validate';
 
 const setSchedule = async (req: Request, res: Response) => {
@@ -26,7 +26,7 @@ const setSchedule = async (req: Request, res: Response) => {
         }
         // Проверка прав доступа
         if (user.role !== UserRole.MASTER) {
-          res.status(403).json(sendError('Access denied!'));
+          res.status(403).json(sendError(FORBIDDEN));
           return;
         }
         // Валидация
