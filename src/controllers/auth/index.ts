@@ -96,7 +96,9 @@ const registerController = async (req: Request, res: Response) => {
           schedule.hours = '';
           await manager.save(schedule);
         }
-        res.json({ ok: true, token });
+        res
+          .cookie('token', token)
+          .json({ ok: true });
       });
   } catch (e) {
     console.log(e);
@@ -136,7 +138,9 @@ const loginController = async (req: Request, res: Response) => {
             ...user,
             token,
           });
-          res.json({ ok: true, token });
+          res
+            .cookie('token', token)
+            .json({ ok: true });
           return;
         }
         res.json(sendError('Incorrect password!'));
@@ -144,13 +148,6 @@ const loginController = async (req: Request, res: Response) => {
   } catch (e) {
     console.log(e);
     res.status(500).json(sendError(SERVER_ERROR));
-  } finally {
-    if (!res.finished) {
-      res.json({
-        ok: true,
-        token,
-      });
-    }
   }
 };
 
