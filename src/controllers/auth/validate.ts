@@ -46,15 +46,21 @@ export const validateRegister = (req: Request, res: Response): boolean => {
     return false;
   }
   if (!login) {
-    res.json(sendError('Enter `login`!'));
+    res.json(sendError({
+      login: 'Enter login!',
+    }));
     return false;
   }
   if (typeof login !== 'string') {
-    res.json(sendError('`login` must be of type string!'));
+    res.json(sendError({
+      login: 'Login must be of type string!',
+    }));
     return false;
   }
   if (!login[0].match(/[a-zA-Z]/) || !login.match(/^[A-Za-z0-9]*$/)) {
-    res.json(sendError('`login` must begin with a letter and contain only Latin letters and numbers!'));
+    res.json(sendError({
+      login: 'Login must begin with a letter and contain only Latin letters and numbers!',
+    }));
     return false;
   }
   if (!password) {

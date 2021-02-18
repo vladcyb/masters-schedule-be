@@ -1,1 +1,1 @@
-export const sendError = (error: string) => ({ ok: false, error });
+export const sendError = (error: any) => ({ ok: false, error });

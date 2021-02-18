@@ -41,7 +41,9 @@ const registerController = async (req: Request, res: Response) => {
           },
         });
         if (foundUser) {
-          res.json(sendError('`login` is already taken!'));
+          res.json(sendError({
+            login: 'Login is already taken!',
+          }));
           return;
         }
         if (role === UserRole.MASTER) {
@@ -127,7 +129,9 @@ const loginController = async (req: Request, res: Response) => {
           },
         });
         if (!user) {
-          res.send(sendError('User not found'));
+          res.send(sendError({
+            login: 'User not found',
+          }));
           return;
         }
         if (bcrypt.compareSync(password, user.password)) {
@@ -143,7 +147,9 @@ const loginController = async (req: Request, res: Response) => {
             .json({ ok: true });
           return;
         }
-        res.json(sendError('Incorrect password!'));
+        res.json(sendError({
+          password: 'Incorrect password!',
+        }));
       });
   } catch (e) {
     console.log(e);
