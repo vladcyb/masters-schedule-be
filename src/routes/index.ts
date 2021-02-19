@@ -10,14 +10,11 @@ import authMiddleware from '../controllers/authMiddleware';
 
 const routes = Router();
 
-/* authorized routes */
 routes.use('/order', authMiddleware, orderRoutes);
 routes.use('/specialization', authMiddleware, specializationRoutes);
 routes.use('/service', authMiddleware, serviceRoutes);
 routes.use('/master', authMiddleware, masterRoutes);
-routes.post('/location/*', authMiddleware);
 
-/* public routes */
 routes.use('/register', registrationRoutes);
 routes.use('/login', loginRoutes);
 routes.use('/location', locationRoutes);
