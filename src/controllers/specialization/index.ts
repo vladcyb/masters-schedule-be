@@ -3,7 +3,7 @@ import { getConnection } from 'typeorm';
 import Specialization from '../../models/Specialization';
 import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
-import { validateCreateSpecialization } from './validate';
+import { validateCreateSpecialization, validateUpdateSpecialization } from './validate';
 import { UserRole } from '../../models/User/types';
 
 const create = async (req: Request, res: Response) => {
@@ -19,7 +19,7 @@ const create = async (req: Request, res: Response) => {
     const connection = getConnection();
     const specializations = connection.getRepository(Specialization);
     if (user.role !== UserRole.ADMIN) {
-      res.json(sendError('Only admin can create specialization!'));
+      res.json(sendError('Only administrator can create specialization!'));
       return;
     }
     const found = await specializations.findOne({
@@ -54,9 +54,44 @@ const getSpecializations = async (req: Request, res: Response) => {
   }
 };
 
+const update = async (req: Request, res: Response) => {
+  if (!validateUpdateSpecialization(req, res)) {
+    return;
+  }
+  const { user } = req as any;
+  const {
+    id, title, icon,
+  } = req.body;
+  try {
+    if (user.role !== UserRole.ADMIN) {
+      res.json(sendError('Only administrator can edit specialization!'));
+      return;
+    }
+    const specializations = getConnection().getRepository(Specialization);
+    const specialization = await specializations
+      .findOne({
+        where: {
+          id,
+        },
+      });
+    if (!specialization) {
+      res.json({ ok: false, error: 'Specialization not found!' });
+      return;
+    }
+    specialization.title = title;
+    specialization.icon = icon;
+    await specializations.save(specialization);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json(sendError(SERVER_ERROR));
+    console.log(e);
+  }
+};
+
 const specializationController = {
   create,
   get: getSpecializations,
+  update,
 };
 
 export default specializationController;
