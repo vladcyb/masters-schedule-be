@@ -50,8 +50,20 @@ const create = async (req: Request, res: Response) => {
   }
 };
 
+const getLocations = async (req: Request, res: Response) => {
+  try {
+    const locations = await getConnection()
+      .getRepository(Location)
+      .find();
+    res.json({ ok: true, result: locations });
+  } catch (e) {
+    res.json({ ok: false, error: SERVER_ERROR });
+  }
+};
+
 const locationController = {
   create,
+  get: getLocations,
 };
 
 export default locationController;
