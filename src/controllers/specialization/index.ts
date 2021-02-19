@@ -42,8 +42,21 @@ const create = async (req: Request, res: Response) => {
   }
 };
 
+const getSpecializations = async (req: Request, res: Response) => {
+  try {
+    const result = await getConnection()
+      .getRepository(Specialization)
+      .find();
+    res.json({ ok: true, result });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
+  }
+};
+
 const specializationController = {
   create,
+  get: getSpecializations,
 };
 
 export default specializationController;

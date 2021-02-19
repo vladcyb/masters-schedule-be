@@ -11,12 +11,12 @@ import authMiddleware from '../controllers/authMiddleware';
 const routes = Router();
 
 routes.use('/order', authMiddleware, orderRoutes);
-routes.use('/specialization', authMiddleware, specializationRoutes);
 routes.use('/service', authMiddleware, serviceRoutes);
 routes.use('/master', authMiddleware, masterRoutes);
 
 routes.use('/register', registrationRoutes);
 routes.use('/login', loginRoutes);
 routes.use('/location', locationRoutes);
+routes.use('/specialization', specializationRoutes);
 
 export default routes;
