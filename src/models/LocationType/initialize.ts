@@ -7,9 +7,9 @@ export const initializeLocationTypes = async () => {
   const locationType1 = new LocationType();
   const locationType2 = new LocationType();
   const locationType3 = new LocationType();
-  locationType1.title = 'Region';
-  locationType2.title = 'City';
-  locationType3.title = 'District';
+  locationType1.title = 'region';
+  locationType2.title = 'city';
+  locationType3.title = 'district';
   try {
     await locationTypes.save(locationType1);
     // eslint-disable-next-line no-empty
