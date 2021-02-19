@@ -4,7 +4,7 @@ import specializationController from '../../controllers/specialization';
 
 const specializationRoutes = Router();
 
-specializationRoutes.post('/create', authMiddleware, specializationController.create);
+specializationRoutes.post('/', authMiddleware, specializationController.create);
 specializationRoutes.get('/', specializationController.get);
 
 export default specializationRoutes;

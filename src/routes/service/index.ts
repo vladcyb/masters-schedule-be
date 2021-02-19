@@ -3,6 +3,6 @@ import serviceController from '../../controllers/service';
 
 const serviceRoutes = Router();
 
-serviceRoutes.post('/create', serviceController.create);
+serviceRoutes.post('/', serviceController.create);
 
 export default serviceRoutes;
