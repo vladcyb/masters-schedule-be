@@ -54,9 +54,12 @@ const getLocations = async (req: Request, res: Response) => {
   try {
     const locations = await getConnection()
       .getRepository(Location)
-      .find();
+      .find({
+        relations: ['type'],
+      });
     res.json({ ok: true, result: locations });
   } catch (e) {
+    console.log(e);
     res.json({ ok: false, error: SERVER_ERROR });
   }
 };
