@@ -8,6 +8,7 @@ import specializationRoutes from './specialization';
 import serviceRoutes from './service';
 import masterRoutes from './master';
 import meRoutes from './me';
+import logoutRoutes from './logout';
 
 const routes = Router();
 
@@ -16,6 +17,7 @@ routes.use('/service', authMiddleware, serviceRoutes);
 routes.use('/master', authMiddleware, masterRoutes);
 
 routes.use('/me', authMiddleware, meRoutes);
+routes.use('/logout', authMiddleware, logoutRoutes);
 routes.use('/register', registrationRoutes);
 routes.use('/login', loginRoutes);
 routes.use('/location', locationRoutes);

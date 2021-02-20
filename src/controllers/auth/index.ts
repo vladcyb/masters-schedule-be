@@ -177,9 +177,36 @@ const loginController = async (req: Request, res: Response) => {
   }
 };
 
+const logoutController = async (req: Request, res: Response) => {
+  const { user: { id } } = req as any;
+  try {
+    await getManager()
+      .transaction(async (manager) => {
+        const user = await manager.findOne(User, {
+          where: {
+            id,
+          },
+        });
+        if (!user) {
+          res.json({ ok: true });
+          return;
+        }
+        user.token = null;
+        await manager.save(user);
+        res
+          .clearCookie('token')
+          .json({ ok: true });
+      });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ ok: false, error: SERVER_ERROR });
+  }
+};
+
 const AuthController = {
   register: registerController,
   login: loginController,
+  logout: logoutController,
 };
 
 export default AuthController;
