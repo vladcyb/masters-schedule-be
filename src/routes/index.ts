@@ -15,7 +15,7 @@ routes.use('/order', authMiddleware, orderRoutes);
 routes.use('/service', authMiddleware, serviceRoutes);
 routes.use('/master', authMiddleware, masterRoutes);
 
-routes.use('/me', meRoutes);
+routes.use('/me', authMiddleware, meRoutes);
 routes.use('/register', registrationRoutes);
 routes.use('/login', loginRoutes);
 routes.use('/location', locationRoutes);
