@@ -15,7 +15,7 @@ import { UserRole } from '../../models/User/types';
 import { MasterStatus } from '../../models/Order/enums';
 
 dotenv.config();
-const { SECRET } = process.env;
+const { SECRET, COOKIE_MAX_AGE } = process.env;
 
 const registerController = async (req: Request, res: Response) => {
   const {
@@ -99,7 +99,7 @@ const registerController = async (req: Request, res: Response) => {
           await manager.save(schedule);
         }
         res
-          .cookie('token', token)
+          .cookie('token', token, { maxAge: parseInt(COOKIE_MAX_AGE, 10) })
           .json({
             ok: true,
             result: {
@@ -153,7 +153,7 @@ const loginController = async (req: Request, res: Response) => {
             token,
           });
           res
-            .cookie('token', token)
+            .cookie('token', token, { maxAge: parseInt(COOKIE_MAX_AGE, 10) })
             .json({
               ok: true,
               result: {
