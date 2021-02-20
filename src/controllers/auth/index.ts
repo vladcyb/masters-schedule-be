@@ -100,7 +100,17 @@ const registerController = async (req: Request, res: Response) => {
         }
         res
           .cookie('token', token)
-          .json({ ok: true });
+          .json({
+            ok: true,
+            result: {
+              id: user.id,
+              login: user.login,
+              surname: user.surname,
+              name: user.name,
+              patronymic: user.patronymic,
+              role: user.role,
+            },
+          });
       });
   } catch (e) {
     console.log(e);
@@ -144,7 +154,17 @@ const loginController = async (req: Request, res: Response) => {
           });
           res
             .cookie('token', token)
-            .json({ ok: true });
+            .json({
+              ok: true,
+              result: {
+                id: user.id,
+                login: user.login,
+                surname: user.surname,
+                name: user.name,
+                patronymic: user.patronymic,
+                role: user.role,
+              },
+            });
           return;
         }
         res.json(sendError({
