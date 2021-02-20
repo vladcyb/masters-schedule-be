@@ -15,9 +15,9 @@ const routes = Router();
 routes.use('/order', authMiddleware, orderRoutes);
 routes.use('/service', authMiddleware, serviceRoutes);
 routes.use('/master', authMiddleware, masterRoutes);
-
 routes.use('/me', authMiddleware, meRoutes);
-routes.use('/logout', authMiddleware, logoutRoutes);
+
+routes.use('/logout', logoutRoutes);
 routes.use('/register', registrationRoutes);
 routes.use('/login', loginRoutes);
 routes.use('/location', locationRoutes);

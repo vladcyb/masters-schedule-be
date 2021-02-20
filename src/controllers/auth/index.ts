@@ -178,8 +178,14 @@ const loginController = async (req: Request, res: Response) => {
 };
 
 const logoutController = async (req: Request, res: Response) => {
-  const { user: { id } } = req as any;
   try {
+    const { token } = req.cookies;
+    if (!token) {
+      res.json({ ok: true });
+      return;
+    }
+    const payload = jwt.verify(token, SECRET);
+    const { id } = payload as any;
     await getManager()
       .transaction(async (manager) => {
         const user = await manager.findOne(User, {
@@ -187,7 +193,7 @@ const logoutController = async (req: Request, res: Response) => {
             id,
           },
         });
-        if (!user) {
+        if (!user || user.token !== token) {
           res.json({ ok: true });
           return;
         }
@@ -199,7 +205,10 @@ const logoutController = async (req: Request, res: Response) => {
       });
   } catch (e) {
     console.log(e);
-    res.status(500).json({ ok: false, error: SERVER_ERROR });
+    /* Если токен не валидный, то словится ошибка */
+    res
+      .clearCookie('token')
+      .json({ ok: true });
   }
 };
 
