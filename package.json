@@ -30,7 +30,8 @@
       "jsonwebtoken": "^8.5.1",
       "pg": "^8.5.1",
       "reflect-metadata": "^0.1.10",
-      "typeorm": "0.2.31"
+      "typeorm": "0.2.31",
+      "typeorm-store": "^1.2.0"
    },
    "scripts": {
       "start": "nodemon src/index.ts"
