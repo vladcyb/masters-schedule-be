@@ -8,7 +8,7 @@ import User from '../../models/User';
 const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const { SECRET } = process.env;
   try {
-    const { token } = req.cookies;
+    const { token } = req.session as any;
     if (!token) {
       res.status(401).json(sendError('Unauthorized'));
       return;

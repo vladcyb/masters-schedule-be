@@ -15,7 +15,8 @@ import { UserRole } from '../../models/User/types';
 import { MasterStatus } from '../../models/Order/enums';
 
 dotenv.config();
-const { SECRET, COOKIE_MAX_AGE } = process.env;
+
+const { SECRET } = process.env;
 
 const registerController = async (req: Request, res: Response) => {
   const {
@@ -98,8 +99,8 @@ const registerController = async (req: Request, res: Response) => {
           schedule.hours = '';
           await manager.save(schedule);
         }
+        (req.session as any).token = token;
         res
-          .cookie('token', token, { maxAge: parseInt(COOKIE_MAX_AGE, 10) })
           .json({
             ok: true,
             result: {
@@ -139,21 +140,21 @@ const loginController = async (req: Request, res: Response) => {
           },
         });
         if (!user) {
-          res.send(sendError({
+          res.json(sendError({
             login: 'User not found',
           }));
           return;
         }
         if (bcrypt.compareSync(password, user.password)) {
           token = jwt.sign({ id: user.id }, SECRET, {
-            expiresIn: '1h',
+            expiresIn: process.env.COOKIE_MAX_AGE,
           });
           await manager.save(User, {
             ...user,
             token,
           });
+          (req.session as any).token = token;
           res
-            .cookie('token', token, { maxAge: parseInt(COOKIE_MAX_AGE, 10) })
             .json({
               ok: true,
               result: {
@@ -179,7 +180,7 @@ const loginController = async (req: Request, res: Response) => {
 
 const logoutController = async (req: Request, res: Response) => {
   try {
-    const { token } = req.cookies;
+    const { token } = req.session as any;
     if (!token) {
       res.json({ ok: true });
       return;
@@ -199,15 +200,19 @@ const logoutController = async (req: Request, res: Response) => {
         }
         user.token = null;
         await manager.save(user);
-        res
-          .clearCookie('token')
-          .json({ ok: true });
+        req.session.destroy((err) => {
+          if (err) {
+            console.log(err);
+            res.json({ ok: false, error: SERVER_ERROR });
+            return;
+          }
+          res.json({ ok: true });
+        });
       });
   } catch (e) {
     console.log(e);
     /* Если токен не валидный, то словится ошибка */
     res
-      .clearCookie('token')
       .json({ ok: true });
   }
 };
