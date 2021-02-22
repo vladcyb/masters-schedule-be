@@ -33,7 +33,7 @@ const setSchedule = async (req: Request, res: Response) => {
         if (!validateSetMasterSchedule(req, res)) {
           return;
         }
-        const transactionResult = await manager.save(Schedule, { // TODO
+        const transactionResult = await manager.save(Schedule, {
           ...schedule,
           hours,
         });

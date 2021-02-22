@@ -16,7 +16,7 @@ import { MasterStatus } from '../../models/Order/enums';
 
 dotenv.config();
 
-const { SECRET } = process.env;
+const { SECRET, BCRYPT_ROUNDS, COOKIE_MAX_AGE } = process.env;
 
 const registerController = async (req: Request, res: Response) => {
   const {
@@ -71,7 +71,7 @@ const registerController = async (req: Request, res: Response) => {
           }
         }
 
-        const salt = bcrypt.genSaltSync(12);
+        const salt = bcrypt.genSaltSync(parseInt(BCRYPT_ROUNDS, 10));
         const passwordHash = bcrypt.hashSync(password, salt);
 
         const user = new User();
@@ -83,7 +83,7 @@ const registerController = async (req: Request, res: Response) => {
         user.patronymic = patronymic;
         await manager.save(user);
         const token = jwt.sign({ id: user.id }, SECRET, {
-          expiresIn: '1h',
+          expiresIn: COOKIE_MAX_AGE,
         });
         user.token = token;
         await manager.save(user);
@@ -147,7 +147,7 @@ const loginController = async (req: Request, res: Response) => {
         }
         if (bcrypt.compareSync(password, user.password)) {
           token = jwt.sign({ id: user.id }, SECRET, {
-            expiresIn: process.env.COOKIE_MAX_AGE,
+            expiresIn: COOKIE_MAX_AGE,
           });
           await manager.save(User, {
             ...user,
