@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
-import { SERVER_ERROR } from '../../shared/constants';
+import { SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
 import User from '../../models/User';
 
 export const getMe = async (req: Request, res: Response) => {
@@ -22,7 +22,7 @@ export const getMe = async (req: Request, res: Response) => {
         ],
       });
     if (!me) {
-      res.status(401).json({ ok: false, error: 'Unauthorized' });
+      res.status(401).json({ ok: false, error: UNAUTHORIZED });
       return;
     }
     res.json({ ok: true, result: me });

@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { getConnection } from 'typeorm';
 import { NextFunction, Request, Response } from 'express';
 import { sendError } from '../../shared/sendError';
-import { SERVER_ERROR } from '../../shared/constants';
+import { SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
 import User from '../../models/User';
 
 const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
@@ -10,7 +10,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
   try {
     const { token } = req.session as any;
     if (!token) {
-      res.status(401).json(sendError('Unauthorized'));
+      res.status(401).json(sendError(UNAUTHORIZED));
       return;
     }
     const payload = jwt.verify(token, SECRET);
@@ -24,7 +24,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
           },
         });
       if (!user || user.token !== token) {
-        res.status(401).json(sendError('Unauthorized'));
+        res.status(401).json(sendError(UNAUTHORIZED));
         return;
       }
       (req as any).user = user;
@@ -34,7 +34,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
     }
     next();
   } catch (e) {
-    res.status(401).json(sendError('Unauthorized'));
+    res.status(401).json(sendError(UNAUTHORIZED));
   }
 };
 

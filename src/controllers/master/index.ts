@@ -4,7 +4,7 @@ import { sendError } from '../../shared/sendError';
 import Master from '../../models/Master';
 import Schedule from '../../models/Schedule';
 import { UserRole } from '../../models/User/types';
-import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
+import { FORBIDDEN, SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
 import { validateSetMasterSchedule } from './validate';
 
 const setSchedule = async (req: Request, res: Response) => {
@@ -21,7 +21,7 @@ const setSchedule = async (req: Request, res: Response) => {
           where: { master },
         });
         if (!user) {
-          res.status(401).json(sendError('Unauthorized'));
+          res.status(401).json(sendError(UNAUTHORIZED));
           return;
         }
         // Проверка прав доступа
