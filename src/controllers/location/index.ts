@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getConnection } from 'typeorm';
+import { getConnection, getManager } from 'typeorm';
 import LocationType from '../../models/LocationType';
 import Location from '../../models/Location';
 import { sendError } from '../../shared/sendError';
@@ -19,31 +19,47 @@ const create = async (req: Request, res: Response) => {
       typeId,
     } = req.body;
     const { user } = req as any;
-    const connection = getConnection();
-    const locationsTypes = connection.getRepository(LocationType);
-    const locations = connection.getRepository(Location);
+
     if (user.role !== UserRole.ADMIN) {
       res.send(sendError('Only admin can create location!'));
       return;
     }
-
-    // Проверка на существование типа указанной локации
-    const foundLocationType = await locationsTypes.findOne({
-      where: {
-        id: typeId,
-      },
+    await getManager().transaction(async (manager) => {
+      // Проверка на существование типа указанной локации
+      const foundLocationType = await manager.findOne(LocationType, {
+        where: {
+          id: typeId,
+        },
+      });
+      const foundParentLocation = await manager.findOne(Location, {
+        where: {
+          id: parentId,
+        },
+      });
+      if (!foundLocationType) {
+        res.json(sendError('Location type not found!'));
+        return;
+      }
+      if (!foundParentLocation && parentId) {
+        res.json(sendError('Parent location with given id not found!'));
+        return;
+      }
+      const location = new Location();
+      location.coordinates = coordinates;
+      location.parent = parentId;
+      location.title = title;
+      location.type = typeId;
+      const saved = await manager.save(location);
+      res.json({
+        ok: true,
+        result: {
+          title: saved.title,
+          coordinates: saved.coordinates,
+          type: foundLocationType,
+          parent: foundParentLocation,
+        },
+      });
     });
-    if (!foundLocationType) {
-      res.json(sendError('Location type not found!'));
-      return;
-    }
-    const location = new Location();
-    location.coordinates = coordinates;
-    location.parent = parentId;
-    location.title = title;
-    location.type = typeId;
-    const result = await locations.save(location);
-    res.json({ ok: true, result });
   } catch (e) {
     console.log(e);
     res.status(500).json(sendError(SERVER_ERROR));
@@ -55,7 +71,7 @@ const getLocations = async (req: Request, res: Response) => {
     const locations = await getConnection()
       .getRepository(Location)
       .find({
-        relations: ['type'],
+        relations: ['type', 'parent'],
       });
     res.json({ ok: true, result: locations });
   } catch (e) {
