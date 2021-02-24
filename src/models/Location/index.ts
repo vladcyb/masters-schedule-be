@@ -5,7 +5,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import LocationType from '../LocationType';
@@ -15,7 +14,7 @@ export default class Location {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Location)
+  @ManyToOne(() => Location)
   @JoinColumn()
   parent: Location;
 
