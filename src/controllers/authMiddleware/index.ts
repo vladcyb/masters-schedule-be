@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { getConnection } from 'typeorm';
 import { NextFunction, Request, Response } from 'express';
+import User from '../../models/User';
 import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
-import User from '../../models/User';
 
 const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const { SECRET } = process.env;

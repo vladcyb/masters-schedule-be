@@ -4,9 +4,10 @@ import Order from '../../models/Order';
 import Service from '../../models/Service';
 import { validateSetOrderStatus, validateCreateOrder } from './validate';
 import { sendError } from '../../shared/sendError';
-import { SERVER_ERROR } from '../../shared/constants';
+import { SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
 import { OrderStatus } from '../../models/Order/enums';
 import { UserRole } from '../../models/User/types';
+import User from '../../models/User';
 
 const createOrder = async (req: Request, res: Response) => {
   try {
@@ -84,9 +85,27 @@ const setOrderStatus = async (req: Request, res: Response) => {
   }
 };
 
+const getAll = async (req: Request, res: Response) => {
+  try {
+    const { user: { id: userId } } = req as any;
+    const result = await getConnection()
+      .getRepository(Order)
+      .find({
+        where: {
+          client: userId,
+        },
+      });
+    res.json({ ok: true, result });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
+  }
+};
+
 const orderController = {
   createOrder,
   setOrderStatus,
+  getAll,
 };
 
 export default orderController;
