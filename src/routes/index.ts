@@ -9,6 +9,7 @@ import serviceRoutes from './service';
 import masterRoutes from './master';
 import meRoutes from './me';
 import logoutRoutes from './logout';
+import locationTypeRoutes from './locationType';
 
 const routes = Router();
 
@@ -21,6 +22,7 @@ routes.use('/logout', logoutRoutes);
 routes.use('/register', registrationRoutes);
 routes.use('/login', loginRoutes);
 routes.use('/location', locationRoutes);
+routes.use('/locationType', locationTypeRoutes);
 routes.use('/specialization', specializationRoutes);
 
 export default routes;
