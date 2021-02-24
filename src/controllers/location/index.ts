@@ -3,7 +3,7 @@ import { getConnection, getManager } from 'typeorm';
 import LocationType from '../../models/LocationType';
 import Location from '../../models/Location';
 import { sendError } from '../../shared/sendError';
-import { SERVER_ERROR } from '../../shared/constants';
+import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 import { validateCreateLocation } from './validate';
 import { UserRole } from '../../models/User/types';
 
@@ -76,13 +76,41 @@ const getLocations = async (req: Request, res: Response) => {
     res.json({ ok: true, result: locations });
   } catch (e) {
     console.log(e);
-    res.json({ ok: false, error: SERVER_ERROR });
+    res.status(500).json({ ok: false, error: SERVER_ERROR });
+  }
+};
+
+const deleteLocation = async (req: Request, res: Response) => {
+  const { user } = req as any;
+  if (user.role !== UserRole.ADMIN) {
+    res.status(403).json(sendError(FORBIDDEN));
+    return;
+  }
+  try {
+    const id = parseInt(req.params.id, 10);
+    await getManager().transaction(async (manager) => {
+      const found = await manager.findOne(Location, {
+        where: {
+          id,
+        },
+      });
+      if (!found) {
+        res.status(404).json(sendError('Location not found!'));
+        return;
+      }
+      await manager.delete(Location, id);
+      res.json({ ok: true });
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
   }
 };
 
 const locationController = {
   create,
   get: getLocations,
+  deleteLocation,
 };
 
 export default locationController;
