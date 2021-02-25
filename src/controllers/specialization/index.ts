@@ -28,7 +28,9 @@ const create = async (req: Request, res: Response) => {
       },
     });
     if (found) {
-      res.json(sendError(`Specialization with title='${title}' exists!`));
+      res.json(sendError({
+        title: `Specialization with title='${title}' exists!`,
+      }));
       return;
     }
     const spec = new Specialization();
