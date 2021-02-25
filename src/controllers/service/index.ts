@@ -37,8 +37,22 @@ const create = async (req: Request, res: Response) => {
   }
 };
 
+const getAll = async (req: Request, res: Response) => {
+  try {
+    const result = await getConnection().getRepository(Service).find();
+    res.json({
+      ok: true,
+      result,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
+  }
+};
+
 const serviceController = {
   create,
+  getAll,
 };
 
 export default serviceController;
