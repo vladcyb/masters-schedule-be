@@ -49,7 +49,9 @@ const create = async (req: Request, res: Response) => {
 
 const getAll = async (req: Request, res: Response) => {
   try {
-    const result = await getConnection().getRepository(Service).find();
+    const result = await getConnection().getRepository(Service).find({
+      relations: ['specialization'],
+    });
     res.json({
       ok: true,
       result,
