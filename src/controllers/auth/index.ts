@@ -16,7 +16,9 @@ import { MasterStatus } from '../../models/Order/enums';
 
 dotenv.config();
 
-const { SECRET, BCRYPT_ROUNDS, COOKIE_MAX_AGE } = process.env;
+const {
+  SECRET, BCRYPT_ROUNDS, COOKIE_MAX_AGE, ALLOW_MANY_SESSIONS,
+} = process.env;
 
 const registerController = async (req: Request, res: Response) => {
   const {
@@ -194,7 +196,7 @@ const logoutController = async (req: Request, res: Response) => {
             id,
           },
         });
-        if (!user || user.token !== token) {
+        if (!user || (user.token !== token && ALLOW_MANY_SESSIONS === 'no')) {
           res.json({ ok: true });
           return;
         }
