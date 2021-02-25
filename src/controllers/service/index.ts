@@ -12,11 +12,6 @@ const create = async (req: Request, res: Response) => {
       return;
     }
     const {
-      user: {
-        id: userId,
-      },
-    } = req as any;
-    const {
       title,
       price,
       duration,
