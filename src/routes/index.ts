@@ -14,13 +14,13 @@ import locationTypeRoutes from './locationType';
 const routes = Router();
 
 routes.use('/order', authMiddleware, orderRoutes);
-routes.use('/service', authMiddleware, serviceRoutes);
 routes.use('/master', authMiddleware, masterRoutes);
 routes.use('/me', authMiddleware, meRoutes);
 
+routes.use('/login', loginRoutes);
 routes.use('/logout', logoutRoutes);
 routes.use('/register', registrationRoutes);
-routes.use('/login', loginRoutes);
+routes.use('/service', serviceRoutes);
 routes.use('/location', locationRoutes);
 routes.use('/locationType', locationTypeRoutes);
 routes.use('/specialization', specializationRoutes);
