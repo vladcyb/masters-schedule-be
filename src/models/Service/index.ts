@@ -20,8 +20,8 @@ export default class Service {
   price: string;
 
   // длительность
-  @Column()
-  duration: number;
+  @Column({ nullable: true })
+  duration: string;
 
   // специализация
   @ManyToOne(() => Specialization)
