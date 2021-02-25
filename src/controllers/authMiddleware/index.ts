@@ -6,7 +6,7 @@ import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
 
 const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const { SECRET } = process.env;
+  const { SECRET, ALLOW_MANY_SESSIONS } = process.env;
   try {
     const { token } = req.session as any;
     if (!token) {
@@ -23,7 +23,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
             id,
           },
         });
-      if (!user || user.token !== token) {
+      if (!user || (ALLOW_MANY_SESSIONS === 'no' && user.token !== token)) {
         res.status(401).json(sendError(UNAUTHORIZED));
         return;
       }
