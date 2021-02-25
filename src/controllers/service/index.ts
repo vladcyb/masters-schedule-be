@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { getConnection } from 'typeorm';
+import { getConnection, getManager } from 'typeorm';
+import Specialization from '../../models/Specialization';
 import Service from '../../models/Service';
 import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
@@ -18,19 +19,28 @@ const create = async (req: Request, res: Response) => {
       specializationId,
     } = req.body;
     const { user } = req as any;
-    const connection = getConnection();
-    const services = connection.getRepository(Service);
     if (user.role !== UserRole.ADMIN) {
       res.json(sendError('Only admin may create services!'));
       return;
     }
-    const service = new Service();
-    service.title = title;
-    service.duration = duration;
-    service.price = price;
-    service.specialization = specializationId;
-    const result = await services.save(service);
-    res.json({ ok: true, result });
+    await getManager().transaction(async (manager) => {
+      const specialization = await manager.findOne(Specialization, {
+        where: {
+          id: specializationId,
+        },
+      });
+      if (!specialization) {
+        res.json(sendError(`Specialization with id=${specializationId} not found!`));
+        return;
+      }
+      const service = new Service();
+      service.title = title;
+      service.duration = duration;
+      service.price = price;
+      service.specialization = specializationId;
+      const result = await manager.save(service);
+      res.json({ ok: true, result });
+    });
   } catch (e) {
     console.log(e);
     res.status(500).json(sendError(SERVER_ERROR));
