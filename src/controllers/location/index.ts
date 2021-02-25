@@ -98,6 +98,15 @@ const deleteLocation = async (req: Request, res: Response) => {
         res.status(404).json(sendError('Location not found!'));
         return;
       }
+      const parent = await manager.findOne(Location, {
+        where: {
+          parent: found,
+        },
+      });
+      if (parent) {
+        res.json(sendError('Cannot delete location as there are references on this location!'));
+        return;
+      }
       await manager.delete(Location, id);
       res.json({ ok: true });
     });
