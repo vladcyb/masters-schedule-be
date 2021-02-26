@@ -53,6 +53,7 @@ const create = async (req: Request, res: Response) => {
       res.json({
         ok: true,
         result: {
+          id: saved.id,
           title: saved.title,
           coordinates: saved.coordinates,
           type: foundLocationType,
