@@ -38,7 +38,13 @@ const create = async (req: Request, res: Response) => {
       service.duration = duration;
       service.price = price;
       service.specialization = specializationId;
-      const result = await manager.save(service);
+      const saved = await manager.save(service);
+      const result = await manager.findOne(Service, {
+        where: {
+          id: saved.id,
+        },
+        relations: ['specialization'],
+      });
       res.json({ ok: true, result });
     });
   } catch (e) {
