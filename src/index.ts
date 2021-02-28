@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import express from 'express';
 import session from 'express-session';
 import cors from 'cors';
+import * as path from 'path';
 import { TypeormStore } from 'typeorm-store';
 import { createConnection, getConnection } from 'typeorm';
 import routes from './routes';
@@ -41,6 +42,9 @@ createConnection().then(async () => {
       httpOnly: true,
     },
   }));
+
+  /* static */
+  app.use('/img', express.static(path.join(__dirname, '../img')));
 
   /* routing */
   app.use(routes);

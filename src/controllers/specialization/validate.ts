@@ -4,8 +4,8 @@ import { sendError } from '../../shared/sendError';
 export const validateCreateSpecialization = (req: Request, res: Response): boolean => {
   const {
     title,
-    icon,
   } = req.body;
+  const { file: icon } = req;
   if (!title) {
     res.json(sendError('Enter `title`'));
     return false;
@@ -15,11 +15,7 @@ export const validateCreateSpecialization = (req: Request, res: Response): boole
     return false;
   }
   if (!icon) {
-    res.json(sendError('Enter `icon`!'));
-    return false;
-  }
-  if (typeof icon !== 'string') {
-    res.json(sendError('`icon` must be of type string'));
+    res.json(sendError('Upload icon!'));
     return false;
   }
   return true;

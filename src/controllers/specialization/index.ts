@@ -14,8 +14,8 @@ const create = async (req: Request, res: Response) => {
     const { user } = req as any;
     const {
       title,
-      icon,
     } = req.body;
+    const { file: icon } = req;
     const connection = getConnection();
     const specializations = connection.getRepository(Specialization);
     if (user.role !== UserRole.ADMIN) {
@@ -35,7 +35,7 @@ const create = async (req: Request, res: Response) => {
     }
     const spec = new Specialization();
     spec.title = title;
-    spec.icon = icon;
+    spec.icon = icon.path;
     const result = await specializations.save(spec);
     res.json({ ok: true, result });
   } catch (e) {
