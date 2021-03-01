@@ -4,10 +4,9 @@ import Order from '../../models/Order';
 import Service from '../../models/Service';
 import { validateSetOrderStatus, validateCreateOrder } from './validate';
 import { sendError } from '../../shared/sendError';
-import { SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
+import { SERVER_ERROR } from '../../shared/constants';
 import { OrderStatus } from '../../models/Order/enums';
 import { UserRole } from '../../models/User/types';
-import User from '../../models/User';
 
 const createOrder = async (req: Request, res: Response) => {
   try {
