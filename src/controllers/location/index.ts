@@ -48,7 +48,7 @@ const create = async (req: Request, res: Response) => {
       location.coordinates = coordinates;
       location.parent = parentId;
       location.title = title;
-      location.type = typeId;
+      location.typeId = typeId;
       const saved = await manager.save(location);
       res.json({
         ok: true,

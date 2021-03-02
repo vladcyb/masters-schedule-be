@@ -27,7 +27,10 @@ export default class Location {
   @Column()
   coordinates: string;
 
+  @Column({ name: 'typeId' })
+  typeId: number;
+
   @ManyToOne(() => LocationType)
-  @JoinColumn()
+  @JoinColumn({ name: 'typeId' })
   type: LocationType;
 }
