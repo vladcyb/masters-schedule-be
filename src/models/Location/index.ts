@@ -5,18 +5,21 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent,
 } from 'typeorm';
 import LocationType from '../LocationType';
 
 @Entity()
+@Tree('nested-set')
 export default class Location {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Location)
-  @JoinColumn()
+  @TreeParent()
   parent: Location;
+
+  @TreeChildren()
+  children: Location[];
 
   @Column()
   title: string;

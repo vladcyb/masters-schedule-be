@@ -57,7 +57,6 @@ const create = async (req: Request, res: Response) => {
           title: saved.title,
           coordinates: saved.coordinates,
           type: foundLocationType,
-          parent: foundParentLocation,
         },
       });
     });
@@ -70,10 +69,8 @@ const create = async (req: Request, res: Response) => {
 const getLocations = async (req: Request, res: Response) => {
   try {
     const locations = await getConnection()
-      .getRepository(Location)
-      .find({
-        relations: ['type', 'parent'],
-      });
+      .getTreeRepository(Location)
+      .findTrees();
     res.json({ ok: true, result: locations });
   } catch (e) {
     console.log(e);
