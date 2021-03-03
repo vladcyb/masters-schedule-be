@@ -97,6 +97,7 @@ const deleteLocation = async (req: Request, res: Response) => {
         res.status(404).json(sendError('Location not found!'));
         return;
       }
+      console.log(found);
       const parent = await manager.findOne(Location, {
         where: {
           parent: found,
@@ -107,10 +108,16 @@ const deleteLocation = async (req: Request, res: Response) => {
         return;
       }
       await manager.delete(Location, id);
-      res.json({
-        ok: true,
-        parentId: found.parent.id,
-      });
+      if (found.parent) {
+        res.json({
+          ok: true,
+          parentId: found.parent.id,
+        });
+      } else {
+        res.json({
+          ok: true,
+        });
+      }
     });
   } catch (e) {
     console.log(e);
