@@ -6,9 +6,9 @@ export const validateCreateOrder = (req: Request, res: Response): boolean => {
   const {
     description,
     address,
-    photo,
     service,
   } = req.body;
+  const { file: photo } = req;
   if (!description) {
     res.json(sendError('Enter `description`!'));
     return false;
@@ -26,11 +26,7 @@ export const validateCreateOrder = (req: Request, res: Response): boolean => {
     return false;
   }
   if (!photo) {
-    res.json(sendError('Enter `photo`!'));
-    return false;
-  }
-  if (typeof photo !== 'string') {
-    res.json(sendError('`photo` must be of type string!'));
+    res.json(sendError('Upload photo!'));
     return false;
   }
   if (typeof service !== 'undefined' && typeof service !== 'number') {

@@ -19,10 +19,9 @@ const createOrder = async (req: Request, res: Response) => {
     const {
       description,
       address,
-      photo,
       service,
     } = req.body;
-    const { user } = req as any;
+    const { file: photo, user } = req as any;
     if (user.role !== UserRole.CLIENT) {
       res.json(sendError('Only client may create orders.'));
       return;
@@ -41,7 +40,7 @@ const createOrder = async (req: Request, res: Response) => {
     const order = new Order();
     order.address = address;
     order.description = description;
-    order.photo = photo;
+    order.photo = photo.path;
     order.client = user;
     order.status = OrderStatus.PENDING;
     order.services = service;
