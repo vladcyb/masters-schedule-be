@@ -45,7 +45,19 @@ const createOrder = async (req: Request, res: Response) => {
     order.status = OrderStatus.PENDING;
     order.services = service;
     await orders.save(order);
-    res.json({ ok: true });
+    res.json({
+      ok: true,
+      result: {
+        id: order.id,
+        description: order.description,
+        startDate: order.startDate,
+        finishDate: order.finishDate,
+        comment: order.comment,
+        photo: order.photo,
+        status: order.status,
+        address: order.address,
+      },
+    });
   } catch (e) {
     console.log(e);
     res.status(500).json(sendError(SERVER_ERROR));
