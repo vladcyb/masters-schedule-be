@@ -21,7 +21,7 @@ const create = async (req: Request, res: Response) => {
     const { user } = req as any;
 
     if (user.role !== UserRole.ADMIN) {
-      res.send(sendError('Only admin can create location!'));
+      res.status(403).json(sendError(FORBIDDEN));
       return;
     }
     await getManager().transaction(async (manager) => {
@@ -132,6 +132,10 @@ const edit = async (req: Request, res: Response) => {
       coordinates,
       typeId,
     } = req.body;
+    if ((req as any).user.role !== UserRole.ADMIN) {
+      res.status(403).json(sendError(FORBIDDEN));
+      return;
+    }
     if (!validateEditLocation(req, res)) {
       return;
     }
