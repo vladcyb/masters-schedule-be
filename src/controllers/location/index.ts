@@ -121,7 +121,7 @@ const deleteLocation = async (req: Request, res: Response) => {
     });
   } catch (e) {
     console.log(e);
-    res.status(500).json(sendError(SERVER_ERROR));
+    res.status(500).json(sendError('Cannot delete location!'));
   }
 };
 
