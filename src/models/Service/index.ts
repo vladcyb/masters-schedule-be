@@ -4,6 +4,7 @@ import {
   Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
 import Specialization from '../Specialization';
+import Order from '../Order';
 
 @Entity()
 export default class Service {
@@ -27,4 +28,7 @@ export default class Service {
   @ManyToOne(() => Specialization)
   @JoinColumn()
   specialization: Specialization;
+
+  @ManyToOne(() => Order, (order) => order.services)
+  order: Order;
 }

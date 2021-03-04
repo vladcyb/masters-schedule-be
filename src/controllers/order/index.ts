@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getConnection } from 'typeorm';
+import { getConnection, getManager } from 'typeorm';
 import Order from '../../models/Order';
 import Service from '../../models/Service';
 import { validateSetOrderStatus, validateCreateOrder } from './validate';
@@ -13,50 +13,63 @@ const createOrder = async (req: Request, res: Response) => {
     if (!validateCreateOrder(req, res)) {
       return;
     }
-    const connection = getConnection();
-    const orders = connection.getRepository(Order);
-    const services = connection.getRepository(Service);
     const {
       description,
       address,
-      service,
+      services,
     } = req.body;
     const { file: photo, user } = req as any;
     if (user.role !== UserRole.CLIENT) {
       res.json(sendError('Only client may create orders.'));
       return;
     }
-    if (typeof service !== 'undefined') {
-      const foundService = await services.findOne({
-        where: {
-          id: service,
-        },
-      });
-      if (!foundService) {
-        res.json(sendError(`Service with id=${service} not found!`));
+
+    await getManager().transaction(async (manager) => {
+      let serviceNotFound = false;
+      const servicesToSave = [];
+      if (typeof services !== 'undefined') {
+        const serviceIds = JSON.parse(services);
+        for (let i = 0; i < serviceIds.length; i += 1) {
+          const serviceId = parseInt(serviceIds[i], 10);
+          // eslint-disable-next-line no-await-in-loop
+          const foundService = await manager.findOne(Service, {
+            where: {
+              id: serviceId,
+            },
+          });
+          if (!foundService) {
+            res.json(sendError(`Service with id=${serviceId} not found!`));
+            serviceNotFound = true;
+          } else {
+            servicesToSave.push(foundService);
+          }
+        }
+      }
+      if (serviceNotFound) {
         return;
       }
-    }
-    const order = new Order();
-    order.address = address;
-    order.description = description;
-    order.photo = photo.path;
-    order.client = user;
-    order.status = OrderStatus.PENDING;
-    order.services = service;
-    await orders.save(order);
-    res.json({
-      ok: true,
-      result: {
-        id: order.id,
-        description: order.description,
-        startDate: order.startDate,
-        finishDate: order.finishDate,
-        comment: order.comment,
-        photo: order.photo,
-        status: order.status,
-        address: order.address,
-      },
+      const order = new Order();
+      order.address = address;
+      order.description = description;
+      order.photo = photo.path;
+      order.client = user;
+      order.status = OrderStatus.PENDING;
+      order.services = servicesToSave;
+      await manager.save(order);
+      res.json({
+        ok: true,
+        result: {
+          id: order.id,
+          description: order.description,
+          startDate: order.startDate,
+          finishDate: order.finishDate,
+          comment: order.comment,
+          photo: order.photo,
+          status: order.status,
+          address: order.address,
+          services: order.services,
+        },
+      });
     });
   } catch (e) {
     console.log(e);
@@ -104,6 +117,7 @@ const getAll = async (req: Request, res: Response) => {
         where: {
           client: userId,
         },
+        relations: ['services'],
       });
     res.json({ ok: true, result });
   } catch (e) {
