@@ -4,7 +4,7 @@ import LocationType from '../../models/LocationType';
 import Location from '../../models/Location';
 import { sendError } from '../../shared/sendError';
 import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
-import { validateCreateLocation } from './validate';
+import { validateCreateLocation, validateEditLocation } from './validate';
 import { UserRole } from '../../models/User/types';
 
 const create = async (req: Request, res: Response) => {
@@ -125,10 +125,55 @@ const deleteLocation = async (req: Request, res: Response) => {
   }
 };
 
+const edit = async (req: Request, res: Response) => {
+  try {
+    const {
+      title,
+      coordinates,
+      typeId,
+    } = req.body;
+    if (!validateEditLocation(req, res)) {
+      return;
+    }
+    await getManager()
+      .transaction(async (manager) => {
+        const location = await manager.findOne(Location, {
+          where: {
+            id: parseInt(req.params.id, 10),
+          },
+        });
+        if (!location) {
+          res.json(sendError('Location not found!'));
+          return;
+        }
+        if (typeof typeId !== 'undefined') {
+          const locationType = await manager.findOne(LocationType, {
+            where: {
+              id: typeId,
+            },
+          });
+          if (!locationType) {
+            res.json(sendError('Location type not found!'));
+            return;
+          }
+        }
+        location.title = title || location.title;
+        location.coordinates = coordinates || location.coordinates;
+        location.typeId = typeId || location.typeId;
+        const result = await manager.save(location);
+        res.json({ ok: true, result });
+      });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
+  }
+};
+
 const locationController = {
   create,
   get: getLocations,
   deleteLocation,
+  edit,
 };
 
 export default locationController;

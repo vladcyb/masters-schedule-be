@@ -38,3 +38,24 @@ export const validateCreateLocation = (req: Request, res: Response): boolean => 
   }
   return true;
 };
+
+export const validateEditLocation = (req: Request, res: Response): boolean => {
+  const {
+    title,
+    coordinates,
+    typeId,
+  } = req.body;
+  if (typeof title !== 'undefined' && typeof title !== 'string') {
+    res.json(sendError('`title` must be of type string!'));
+    return false;
+  }
+  if (typeof coordinates !== 'undefined' && typeof coordinates !== 'string') {
+    res.json(sendError('`coordinates` must be of type string!'));
+    return false;
+  }
+  if (typeof typeId !== 'undefined' && typeof typeId !== 'number') {
+    res.json(sendError('`typeId` must be of type number!'));
+    return false;
+  }
+  return true;
+};
