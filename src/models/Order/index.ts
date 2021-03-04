@@ -4,10 +4,11 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
-  OneToMany,
+  JoinTable,
 } from 'typeorm';
 import Service from '../Service';
 import Master from '../Master';
@@ -55,7 +56,8 @@ export default class Order {
   photo: string;
 
   // каталог услуг
-  @OneToMany(() => Service, (service) => service.order)
+  @ManyToMany(() => Service)
+  @JoinTable()
   services: Service[];
 
   // адрес
