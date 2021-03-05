@@ -10,6 +10,7 @@ import masterRoutes from './master';
 import meRoutes from './me';
 import logoutRoutes from './logout';
 import locationTypeRoutes from './locationType';
+import scheduleRoutes from './mySchedule';
 
 const routes = Router();
 
@@ -24,5 +25,6 @@ routes.use('/service', serviceRoutes);
 routes.use('/location', locationRoutes);
 routes.use('/locationType', locationTypeRoutes);
 routes.use('/specialization', specializationRoutes);
+routes.use('/schedule', scheduleRoutes);
 
 export default routes;
