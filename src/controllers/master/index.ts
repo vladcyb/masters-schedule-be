@@ -53,8 +53,42 @@ const setSchedule = async (req: Request, res: Response) => {
   });
 };
 
+const getSchedule = async (req: Request, res: Response) => {
+  const { user } = req as any;
+  try {
+    if (user.role !== UserRole.MASTER) {
+      res.status(403).json({
+        ok: false,
+        error: 'You are not a master.',
+      });
+      return;
+    }
+    await getManager()
+      .transaction(async (manager) => {
+        const master = await manager.findOne(Master, {
+          where: {
+            user,
+          },
+        });
+        const schedule = await manager.findOne(Schedule, {
+          where: {
+            master,
+          },
+        });
+        res.json({
+          ok: true,
+          result: schedule,
+        });
+      });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
+  }
+};
+
 const masterController = {
   setSchedule,
+  getSchedule,
 };
 
 export default masterController;
