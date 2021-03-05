@@ -12,7 +12,7 @@ export const validateSetMasterSchedule = (req: Request, res: Response): boolean 
     return false;
   }
   if (!(/^([([0-1]?[0-9]|2[0-3]):[0-5][0-9]-([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).test(hours)) {
-    res.json(sendError('`hours` must be in format `hh:mm-hh-mm`'));
+    res.json(sendError('`hours` must be in format `hh:mm-hh:mm`'));
     return false;
   }
   return true;
