@@ -27,8 +27,11 @@ export default class Order {
   master: Master;
 
   // ID клиента
+  @Column()
+  clientId: number;
+
   @ManyToOne(() => User)
-  @JoinColumn()
+  @JoinColumn({ name: 'clientId' })
   client: User;
 
   // описание

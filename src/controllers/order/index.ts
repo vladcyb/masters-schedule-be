@@ -79,7 +79,8 @@ const createOrder = async (req: Request, res: Response) => {
 
 const setOrderStatus = async (req: Request, res: Response) => {
   const { user } = req as any;
-  const { id, status } = req.body;
+  const id = parseInt(req.params.id, 10);
+  const { status } = req.body;
   if (!validateSetOrderStatus(req, res)) {
     return;
   }
@@ -89,19 +90,18 @@ const setOrderStatus = async (req: Request, res: Response) => {
       where: {
         id,
       },
-      relations: ['client'],
     });
     if (!order) {
       res.status(404).json({ ok: false, error: 'Order not found!' });
       return;
     }
-    if (order.client.id !== user.id) {
+    if (order.clientId !== user.id) {
       res.status(403).json({ ok: false, error: 'It\'s not your order!' });
       return;
     }
     order.status = status;
     await orders.save(order);
-    res.json({ ok: true });
+    res.json({ ok: true, result: order });
   } catch (e) {
     console.log(e);
     res.json(sendError(SERVER_ERROR));

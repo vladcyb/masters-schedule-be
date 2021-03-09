@@ -37,15 +37,7 @@ export const validateCreateOrder = (req: Request, res: Response): boolean => {
 };
 
 export const validateSetOrderStatus = (req: Request, res: Response): boolean => {
-  const { id, status } = req.body;
-  if (typeof id === 'undefined') {
-    res.json(sendError('Enter order `id`!'));
-    return false;
-  }
-  if (typeof id !== 'number') {
-    res.json(sendError('`id` must be of type number!'));
-    return false;
-  }
+  const { status } = req.body;
   if (typeof status === 'undefined') {
     res.json(sendError('Enter order `status`!'));
     return false;
