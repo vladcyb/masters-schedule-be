@@ -4,7 +4,7 @@ import Order from '../../models/Order';
 import Service from '../../models/Service';
 import { validateSetOrderStatus, validateCreateOrder } from './validate';
 import { sendError } from '../../shared/sendError';
-import { SERVER_ERROR } from '../../shared/constants';
+import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 import { OrderStatus } from '../../models/Order/enums';
 import { UserRole } from '../../models/User/types';
 
@@ -111,14 +111,27 @@ const setOrderStatus = async (req: Request, res: Response) => {
 const getAll = async (req: Request, res: Response) => {
   try {
     const { user } = req as any;
-    const result = await getConnection()
-      .getRepository(Order)
-      .find({
-        where: {
-          client: user,
-        },
+    const userRole = user.role;
+    const ordersRepository = getConnection().getRepository(Order);
+    if (userRole === UserRole.CLIENT) {
+      const result = await ordersRepository
+        .find({
+          where: {
+            client: user,
+          },
+        });
+      res.json({
+        ok: true,
+        result,
       });
-    res.json({ ok: true, result });
+    } else if (userRole === UserRole.ADMIN) {
+      const result = await ordersRepository.find();
+      res.json({
+        ok: true,
+        result,
+      });
+    }
+    res.status(403).json(sendError(FORBIDDEN));
   } catch (e) {
     console.log(e);
     res.status(500).json(sendError(SERVER_ERROR));
