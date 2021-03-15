@@ -110,14 +110,13 @@ const setOrderStatus = async (req: Request, res: Response) => {
 
 const getAll = async (req: Request, res: Response) => {
   try {
-    const { user: { id: userId } } = req as any;
+    const { user } = req as any;
     const result = await getConnection()
       .getRepository(Order)
       .find({
         where: {
-          client: userId,
+          client: user,
         },
-        relations: ['services'],
       });
     res.json({ ok: true, result });
   } catch (e) {
