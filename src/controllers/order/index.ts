@@ -7,6 +7,7 @@ import { sendError } from '../../shared/sendError';
 import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 import { OrderStatus } from '../../models/Order/enums';
 import { UserRole } from '../../models/User/types';
+import Master from '../../models/Master';
 
 const createOrder = async (req: Request, res: Response) => {
   try {
@@ -112,7 +113,9 @@ const getAll = async (req: Request, res: Response) => {
   try {
     const { user } = req as any;
     const userRole = user.role;
-    const ordersRepository = getConnection().getRepository(Order);
+    const connection = getConnection();
+    const ordersRepository = connection.getRepository(Order);
+    const mastersRepository = connection.getRepository(Master);
     if (userRole === UserRole.CLIENT) {
       const result = await ordersRepository
         .find({
@@ -130,8 +133,24 @@ const getAll = async (req: Request, res: Response) => {
         ok: true,
         result,
       });
+    } else if (userRole === UserRole.MASTER) {
+      const master = await mastersRepository.findOne({
+        where: {
+          user,
+        },
+      });
+      const result = await ordersRepository.find({
+        where: {
+          master,
+        },
+      });
+      res.json({
+        ok: true,
+        result,
+      });
+    } else {
+      res.status(403).json(sendError(FORBIDDEN));
     }
-    res.status(403).json(sendError(FORBIDDEN));
   } catch (e) {
     console.log(e);
     res.status(500).json(sendError(SERVER_ERROR));
