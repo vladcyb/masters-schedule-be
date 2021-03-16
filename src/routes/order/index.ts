@@ -8,7 +8,8 @@ const orderRoutes = Router();
 const photoUploadMiddleware = multer(multerConfig).single('photo');
 
 orderRoutes.post('/', photoUploadMiddleware, orderController.createOrder);
-orderRoutes.put('/updateStatus/:id', orderController.setOrderStatus);
+orderRoutes.put('/:id/updateStatus', orderController.setOrderStatus);
+orderRoutes.put('/:id/setStartDate', orderController.setStartDate);
 
 orderRoutes.get('/', orderController.getAll);
 

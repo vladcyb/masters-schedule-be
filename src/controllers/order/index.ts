@@ -157,10 +157,41 @@ const getAll = async (req: Request, res: Response) => {
   }
 };
 
+const setStartDate = async (req: Request, res: Response) => {
+  try {
+    const { date } = req.body;
+    const { user } = req as any;
+    const { id } = req.params;
+    if (user.role !== UserRole.MASTER) {
+      res.status(403).json(sendError(FORBIDDEN));
+      return;
+    }
+    const connection = getConnection();
+    const ordersRepo = connection.getRepository(Order);
+
+    const order = await ordersRepo.findOne({
+      where: {
+        id,
+      },
+    });
+    console.log(order);
+    order.startDate = date;
+    await ordersRepo.save(order);
+    res.json({
+      ok: true,
+      result: order,
+    });
+  } catch (e) {
+    console.log(e);
+    res.json(sendError('ERROR'));
+  }
+};
+
 const orderController = {
   createOrder,
   setOrderStatus,
   getAll,
+  setStartDate,
 };
 
 export default orderController;
