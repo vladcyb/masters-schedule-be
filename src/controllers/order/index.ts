@@ -127,7 +127,7 @@ const getAll = async (req: Request, res: Response) => {
         ok: true,
         result,
       });
-    } else if (userRole === UserRole.ADMIN) {
+    } else if (userRole === UserRole.ADMIN || userRole === UserRole.OPERATOR) {
       const result = await ordersRepository.find();
       res.json({
         ok: true,
