@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 import { getConnection, getManager } from 'typeorm';
 import Order from '../../models/Order';
 import Service from '../../models/Service';
+import Master from '../../models/Master';
 import { validateSetOrderStatus, validateCreateOrder } from './validate';
 import { sendError } from '../../shared/sendError';
 import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 import { OrderStatus } from '../../models/Order/enums';
 import { UserRole } from '../../models/User/types';
-import Master from '../../models/Master';
 
 const createOrder = async (req: Request, res: Response) => {
   try {
@@ -162,7 +162,7 @@ const setStartDate = async (req: Request, res: Response) => {
     const { date } = req.body;
     const { user } = req as any;
     const { id } = req.params;
-    if (user.role !== UserRole.MASTER) {
+    if (user.role !== UserRole.OPERATOR && user.role !== UserRole.ADMIN) {
       res.status(403).json(sendError(FORBIDDEN));
       return;
     }
@@ -183,7 +183,7 @@ const setStartDate = async (req: Request, res: Response) => {
     });
   } catch (e) {
     console.log(e);
-    res.json(sendError('ERROR'));
+    res.status(500).json(sendError('ERROR'));
   }
 };
 
