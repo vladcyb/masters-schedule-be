@@ -19,9 +19,9 @@ export default class Service {
   @Column()
   price: string;
 
-  // длительность
+  // длительность (в часах)
   @Column({ nullable: true })
-  duration: string;
+  duration: number;
 
   // специализация
   @ManyToOne(() => Specialization)
