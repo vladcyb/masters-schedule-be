@@ -174,8 +174,7 @@ const setStartDate = async (req: Request, res: Response) => {
         id,
       },
     });
-    console.log(order);
-    order.startDate = date;
+    order.startDate = new Date(date);
     await ordersRepo.save(order);
     res.json({
       ok: true,
