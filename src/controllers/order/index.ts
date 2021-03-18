@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { getConnection, getManager } from 'typeorm';
-import { addHours } from 'date-fns';
+import { addHours, parseISO } from 'date-fns';
 import Order from '../../models/Order';
 import Service from '../../models/Service';
 import Master from '../../models/Master';
@@ -180,9 +180,8 @@ const setStartDate = async (req: Request, res: Response) => {
     for (let i = 0; i < order.services.length; i += 1) {
       duration += order.services[i].duration;
     }
-    const startDate = new Date(date);
-    order.startDate = startDate;
-    order.finishDate = addHours(startDate, duration);
+    order.startDate = date;
+    order.finishDate = addHours(parseISO(date), duration).toISOString();
     await ordersRepo.save(order);
     res.json({
       ok: true,

@@ -40,11 +40,11 @@ export default class Order {
 
   // дата начала
   @Column({ nullable: true })
-  startDate: Date;
+  startDate: string;
 
   // дата окончания
   @Column({ nullable: true })
-  finishDate: Date;
+  finishDate: string;
 
   // статус
   @Column()
