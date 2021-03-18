@@ -214,22 +214,32 @@ const setServices = async (req: Request, res: Response) => {
       res.json(sendError('Enter `services`!'));
       return;
     }
-    const ordersRepo = getConnection().getRepository(Order);
-    const order = await ordersRepo
-      .findOne({
-        where: {
-          id: req.params.id,
-        },
+    await getManager().transaction(async (manager) => {
+      const order = await manager
+        .findOne(Order, {
+          where: {
+            id: parseInt(req.params.id, 10),
+          },
+          relations: ['services'],
+        });
+      console.log(services);
+      const servicesToSave = await manager
+        .createQueryBuilder(Service, 'service')
+        .where('service.id IN (:...services)', {
+          services,
+        })
+        .getMany();
+
+      if (!order) {
+        res.status(404).json(sendError('Заказ не найден!'));
+        return;
+      }
+      order.services = servicesToSave;
+      const result = await manager.save(order);
+      res.json({
+        ok: true,
+        result,
       });
-    if (!order) {
-      res.status(404).json(sendError('Заказ не найден!'));
-      return;
-    }
-    order.services = services;
-    const result = await ordersRepo.save(order);
-    res.json({
-      ok: true,
-      result,
     });
   } catch (e) {
     console.log(e);
