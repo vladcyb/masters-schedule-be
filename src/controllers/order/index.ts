@@ -196,11 +196,53 @@ const setStartDate = async (req: Request, res: Response) => {
   }
 };
 
+const setServices = async (req: Request, res: Response) => {
+  try {
+    const {
+      user,
+      body: { services },
+    } = req as any;
+
+    /* checking permissions */
+    if (user.role !== UserRole.OPERATOR && user.role !== UserRole.ADMIN) {
+      res.status(403).json(sendError(FORBIDDEN));
+      return;
+    }
+
+    /* validation */
+    if (!services) {
+      res.json(sendError('Enter `services`!'));
+      return;
+    }
+    const ordersRepo = getConnection().getRepository(Order);
+    const order = await ordersRepo
+      .findOne({
+        where: {
+          id: req.params.id,
+        },
+      });
+    if (!order) {
+      res.status(404).json(sendError('Заказ не найден!'));
+      return;
+    }
+    order.services = services;
+    const result = await ordersRepo.save(order);
+    res.json({
+      ok: true,
+      result,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
+  }
+};
+
 const orderController = {
   createOrder,
   setOrderStatus,
   getAll,
   setStartDate,
+  setServices,
 };
 
 export default orderController;
