@@ -123,7 +123,7 @@ const getAll = async (req: Request, res: Response) => {
           where: {
             client: user,
           },
-          relations: ['services'],
+          relations: ['services', 'master'],
         });
       res.json({
         ok: true,
@@ -131,7 +131,7 @@ const getAll = async (req: Request, res: Response) => {
       });
     } else if (userRole === UserRole.ADMIN || userRole === UserRole.OPERATOR) {
       const result = await ordersRepository.find({
-        relations: ['services'],
+        relations: ['services', 'master'],
       });
       res.json({
         ok: true,
