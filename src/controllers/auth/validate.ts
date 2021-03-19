@@ -35,7 +35,7 @@ export const validateRegister = (req: Request, res: Response): boolean => {
     name,
     patronymic,
     locationId,
-    specializationId,
+    specializationIds,
   } = req.body;
   if (!role) {
     res.json(sendError('Enter `role`!'));
@@ -108,12 +108,12 @@ export const validateRegister = (req: Request, res: Response): boolean => {
       res.json(sendError('`locationId` must be of type number!'));
       return false;
     }
-    if (!specializationId) {
-      res.json(sendError('Enter `specializationId`!'));
+    if (!specializationIds) {
+      res.json(sendError('Enter `specializationIds`!'));
       return false;
     }
-    if (typeof specializationId !== 'number') {
-      res.json(sendError('`specializationId` must be of type number!'));
+    if (!(specializationIds instanceof Array)) {
+      res.json(sendError('`specializationIds` must be of type array of number!'));
       return false;
     }
   }

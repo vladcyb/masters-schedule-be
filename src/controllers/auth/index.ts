@@ -29,7 +29,7 @@ const registerController = async (req: Request, res: Response) => {
     name,
     patronymic,
     locationId,
-    specializationId,
+    specializationIds,
   } = req.body;
   try {
     await getManager()
@@ -62,15 +62,15 @@ const registerController = async (req: Request, res: Response) => {
           }
 
           // проверка на существование специализации
-          const foundSpecialization = await manager.findOne(Specialization, {
-            where: {
-              id: specializationId,
-            },
-          });
-          if (!foundSpecialization) {
-            res.json(sendError('Specialization not found!'));
-            return;
-          }
+          // const foundSpecialization = await manager.findOne(Specialization, {
+          //   where: {
+          //     id: specializationId,
+          //   },
+          // });
+          // if (!foundSpecialization) {
+          //   res.json(sendError('Specialization not found!'));
+          //   return;
+          // }
         }
 
         const salt = bcrypt.genSaltSync(parseInt(BCRYPT_ROUNDS, 10));
@@ -92,7 +92,14 @@ const registerController = async (req: Request, res: Response) => {
         if (role === UserRole.MASTER) {
           const master = new Master();
           master.user = user;
-          master.specialization = specializationId;
+          const specializationsToSave = await manager
+            .createQueryBuilder(Specialization, 'specialization')
+            .where('specialization.id IN (:...specializations)', {
+              specializations: specializationIds,
+            })
+            .getMany();
+
+          master.specializations = specializationsToSave;
           master.location = locationId;
           await manager.save(master);
           const schedule = new Schedule();

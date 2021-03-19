@@ -1,7 +1,7 @@
 // мастер
 
 import {
-  Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn,
+  Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
 import User from '../User';
 import Location from '../Location';
@@ -20,7 +20,7 @@ export default class Master {
   @JoinColumn()
   location: Location;
 
-  @ManyToOne(() => Specialization)
-  @JoinColumn()
-  specialization: Specialization;
+  @ManyToMany(() => Specialization)
+  @JoinTable()
+  specializations: Specialization[];
 }
