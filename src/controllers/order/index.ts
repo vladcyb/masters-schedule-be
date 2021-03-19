@@ -222,7 +222,6 @@ const setServices = async (req: Request, res: Response) => {
           },
           relations: ['services'],
         });
-      console.log(services);
       const servicesToSave = await manager
         .createQueryBuilder(Service, 'service')
         .where('service.id IN (:...services)', {
@@ -235,6 +234,18 @@ const setServices = async (req: Request, res: Response) => {
         return;
       }
       order.services = servicesToSave;
+
+      /* пересчет времени выполнения */
+      const { startDate } = order;
+      if (startDate) {
+        let duration = 0;
+        for (let i = 0; i < order.services.length; i += 1) {
+          duration += order.services[i].duration;
+        }
+        order.finishDate = addHours(parseISO(startDate), duration)
+          .toISOString();
+      }
+
       const result = await manager.save(order);
       res.json({
         ok: true,
