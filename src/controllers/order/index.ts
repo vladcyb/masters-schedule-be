@@ -119,20 +119,25 @@ const getAll = async (req: Request, res: Response) => {
     const mastersRepository = connection.getRepository(Master);
     if (userRole === UserRole.CLIENT) {
       const result = await ordersRepository
-        .find({
-          where: {
-            client: user,
-          },
-          relations: ['services', 'master'],
-        });
+        .createQueryBuilder('order')
+        .where({
+          client: user,
+        })
+        .leftJoinAndSelect('order.services', 'service')
+        .leftJoinAndSelect('order.master', 'master')
+        .orderBy('order.id')
+        .getMany();
       res.json({
         ok: true,
         result,
       });
     } else if (userRole === UserRole.ADMIN || userRole === UserRole.OPERATOR) {
-      const result = await ordersRepository.find({
-        relations: ['services', 'master'],
-      });
+      const result = await ordersRepository
+        .createQueryBuilder('order')
+        .leftJoinAndSelect('order.services', 'service')
+        .leftJoinAndSelect('order.master', 'master')
+        .orderBy('order.id')
+        .getMany();
       res.json({
         ok: true,
         result,
@@ -143,11 +148,15 @@ const getAll = async (req: Request, res: Response) => {
           user,
         },
       });
-      const result = await ordersRepository.find({
-        where: {
+      const result = await ordersRepository
+        .createQueryBuilder('order')
+        .where({
           master,
-        },
-      });
+        })
+        .leftJoinAndSelect('order.services', 'service')
+        .leftJoinAndSelect('order.master', 'master')
+        .orderBy('order.id')
+        .getMany();
       res.json({
         ok: true,
         result,
