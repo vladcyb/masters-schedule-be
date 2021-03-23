@@ -22,7 +22,7 @@ export default class Order {
   id: number;
 
   // ID мастера
-  @OneToOne(() => Master)
+  @OneToOne(() => Master, { eager: true })
   @JoinColumn()
   master: Master;
 
