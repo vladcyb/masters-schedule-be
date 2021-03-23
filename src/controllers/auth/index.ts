@@ -143,11 +143,14 @@ const loginController = async (req: Request, res: Response) => {
           login,
           password,
         } = req.body;
-        const user = await manager.findOne(User, {
-          where: {
-            login,
-          },
-        });
+        const user = await manager
+          .createQueryBuilder(User, 'user')
+          .select()
+          .where('user.login = :login', { login })
+          .addSelect('user.password')
+          .addSelect('user.token')
+          .getOne();
+
         if (!user) {
           res.json(sendError({
             login: 'User not found',

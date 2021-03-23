@@ -17,7 +17,7 @@ export default class User {
   @Length(3)
   login: string;
 
-  @Column()
+  @Column({ select: false })
   @Length(8)
   password: string;
 
@@ -36,6 +36,6 @@ export default class User {
   @Column()
   role: UserRole;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   token: string;
 }

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getManager } from 'typeorm';
+import { getConnection, getManager } from 'typeorm';
 import Master from '../../models/Master';
 import Schedule from '../../models/Schedule';
 import { UserRole } from '../../models/User/types';
@@ -86,9 +86,27 @@ const getSchedule = async (req: Request, res: Response) => {
   }
 };
 
+const getAll = async (req: Request, res: Response) => {
+  try {
+    const result = await getConnection()
+      .getRepository(Master)
+      .find({
+        relations: ['user'],
+      });
+    res.json({
+      ok: true,
+      result,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
+  }
+};
+
 const masterController = {
   setSchedule,
   getSchedule,
+  getAll,
 };
 
 export default masterController;
