@@ -6,7 +6,6 @@ import {
   JoinColumn,
   ManyToMany,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   JoinTable,
 } from 'typeorm';
@@ -22,7 +21,7 @@ export default class Order {
   id: number;
 
   // ID мастера
-  @OneToOne(() => Master, { eager: true })
+  @ManyToOne(() => Master, { eager: true })
   @JoinColumn()
   master: Master;
 
