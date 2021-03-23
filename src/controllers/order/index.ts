@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getConnection, getManager } from 'typeorm';
+import { getConnection, getManager, getRepository } from 'typeorm';
 import { addHours, parseISO } from 'date-fns';
 import Order from '../../models/Order';
 import Service from '../../models/Service';
@@ -8,7 +8,7 @@ import { validateSetOrderStatus, validateCreateOrder } from './validate';
 import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 import { OrderStatus } from '../../models/Order/enums';
 import { UserRole } from '../../models/User/types';
-import { sendError } from '../../shared/methods';
+import { sendError, sendResult } from '../../shared/methods';
 
 const createOrder = async (req: Request, res: Response) => {
   try {
@@ -256,11 +256,50 @@ const setServices = async (req: Request, res: Response) => {
       }
 
       const result = await manager.save(order);
-      res.json({
-        ok: true,
-        result,
-      });
+      res.json(sendResult(result));
     });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
+  }
+};
+
+export const setMaster = async (req: Request, res: Response) => {
+  try {
+    const { id, masterId } = req.params;
+    if (!id) {
+      res.json(sendError('Enter order `id`!'));
+      return;
+    }
+    if (!masterId) {
+      res.json(sendError('Enter `masterId`!'));
+      return;
+    }
+    const orders = getRepository(Order);
+    const masters = getRepository(Master);
+    const order = await orders
+      .findOne({
+        where: {
+          id: parseInt(id, 10),
+        },
+      });
+    if (!order) {
+      res.json(sendError('Заказ не найден!'));
+      return;
+    }
+    const master = await masters
+      .findOne({
+        where: {
+          id: parseInt(masterId, 10),
+        },
+      });
+    if (!master) {
+      res.json(sendError('Мастер не найден!'));
+      return;
+    }
+    order.master = master;
+    await orders.save(order);
+    res.json(sendResult(order));
   } catch (e) {
     console.log(e);
     res.status(500).json(sendError(SERVER_ERROR));
@@ -273,6 +312,7 @@ const orderController = {
   getAll,
   setStartDate,
   setServices,
+  setMaster,
 };
 
 export default orderController;
