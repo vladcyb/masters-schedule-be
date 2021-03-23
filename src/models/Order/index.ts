@@ -59,7 +59,7 @@ export default class Order {
   photo: string;
 
   // каталог услуг
-  @ManyToMany(() => Service)
+  @ManyToMany(() => Service, { eager: true })
   @JoinTable()
   services: Service[];
 
