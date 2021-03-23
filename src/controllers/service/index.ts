@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import { getConnection, getManager } from 'typeorm';
 import Specialization from '../../models/Specialization';
 import Service from '../../models/Service';
-import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
 import { validateCreateService } from '../../routes/service/validate';
 import { UserRole } from '../../models/User/types';
+import { sendError } from '../../shared/methods';
 
 const create = async (req: Request, res: Response) => {
   try {

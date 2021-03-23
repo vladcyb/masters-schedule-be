@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { sendError } from '../../shared/sendError';
 import { UserRole } from '../../models/User/types';
+import { sendError } from '../../shared/methods';
 
 export const validateLogin = (req: Request, res: Response): boolean => {
   const {

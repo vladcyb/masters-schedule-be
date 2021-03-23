@@ -8,11 +8,11 @@ import Master from '../../models/Master';
 import Schedule from '../../models/Schedule';
 import Location from '../../models/Location';
 import Specialization from '../../models/Specialization';
-import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
 import { validateRegister, validateLogin } from './validate';
 import { UserRole } from '../../models/User/types';
 import { MasterStatus } from '../../models/Order/enums';
+import { sendError } from '../../shared/methods';
 
 dotenv.config();
 

@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { getManager } from 'typeorm';
-import { sendError } from '../../shared/sendError';
 import Master from '../../models/Master';
 import Schedule from '../../models/Schedule';
 import { UserRole } from '../../models/User/types';
 import { FORBIDDEN, SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
 import { validateSetMasterSchedule } from './validate';
+import { sendError } from '../../shared/methods';
 
 const setSchedule = async (req: Request, res: Response) => {
   let result;

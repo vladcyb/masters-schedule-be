@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { sendError } from '../../shared/sendError';
 import { OrderStatus } from '../../models/Order/enums';
+import { sendError } from '../../shared/methods';
 
 export const validateCreateOrder = (req: Request, res: Response): boolean => {
   const {

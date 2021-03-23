@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import { getConnection, getManager } from 'typeorm';
 import LocationType from '../../models/LocationType';
 import Location from '../../models/Location';
-import { sendError } from '../../shared/sendError';
 import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 import { validateCreateLocation, validateEditLocation } from './validate';
 import { UserRole } from '../../models/User/types';
+import { sendError } from '../../shared/methods';
 
 const create = async (req: Request, res: Response) => {
   try {

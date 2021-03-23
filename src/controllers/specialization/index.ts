@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
 import Specialization from '../../models/Specialization';
-import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
 import { validateCreateSpecialization, validateUpdateSpecialization } from './validate';
 import { UserRole } from '../../models/User/types';
+import { sendError } from '../../shared/methods';
 
 const create = async (req: Request, res: Response) => {
   try {

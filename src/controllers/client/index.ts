@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
 import Order from '../../models/Order';
 import { UserRole } from '../../models/User/types';
-import { sendError } from '../../shared/sendError';
 import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
+import { sendError } from '../../shared/methods';
 
 const getOrders = async (req: Request, res: Response) => {
   const { user } = (req as any);

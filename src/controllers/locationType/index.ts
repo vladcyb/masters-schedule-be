@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { getConnection } from 'typeorm';
-import { sendError } from '../../shared/sendError';
 import { SERVER_ERROR } from '../../shared/constants';
 import LocationType from '../../models/LocationType';
+import { sendError } from '../../shared/methods';
 
 const getAll = async (req: Request, res: Response) => {
   try {

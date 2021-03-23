@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { sendError } from '../../shared/sendError';
+import { sendError } from '../../shared/methods';
 
 export const validateCreateLocation = (req: Request, res: Response): boolean => {
   const {

@@ -5,10 +5,10 @@ import Order from '../../models/Order';
 import Service from '../../models/Service';
 import Master from '../../models/Master';
 import { validateSetOrderStatus, validateCreateOrder } from './validate';
-import { sendError } from '../../shared/sendError';
 import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 import { OrderStatus } from '../../models/Order/enums';
 import { UserRole } from '../../models/User/types';
+import { sendError } from '../../shared/methods';
 
 const createOrder = async (req: Request, res: Response) => {
   try {

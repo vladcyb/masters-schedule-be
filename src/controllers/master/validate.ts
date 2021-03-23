@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { sendError } from '../../shared/sendError';
+import { sendError } from '../../shared/methods';
 
 export const validateSetMasterSchedule = (req: Request, res: Response): boolean => {
   const hours = req.body.hours.replace(/\s/g, '');
