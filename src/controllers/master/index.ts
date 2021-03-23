@@ -91,7 +91,7 @@ const getAll = async (req: Request, res: Response) => {
     const result = await getConnection()
       .getRepository(Master)
       .find({
-        relations: ['user'],
+        relations: ['user', 'location', 'specializations'],
       });
     res.json({
       ok: true,
