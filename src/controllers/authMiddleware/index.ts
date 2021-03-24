@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import User from '../../models/User';
 import { SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
 import { sendError } from '../../shared/methods';
+import { UserRole } from '../../models/User/types';
 
 const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const { SECRET, ALLOW_MANY_SESSIONS } = process.env;
@@ -28,6 +29,13 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
         return;
       }
       (req as any).user = user;
+      (req as any).role = {
+        isAdmin: user.role === UserRole.ADMIN,
+        isMaster: user.role === UserRole.MASTER,
+        isOperator: user.role === UserRole.OPERATOR,
+        isClient: user.role === UserRole.CLIENT,
+        isResponsible: user.role === UserRole.RESPONSIBLE,
+      };
     } catch (e) {
       res.status(500).json(sendError(SERVER_ERROR));
       return;
