@@ -80,8 +80,9 @@ const createOrder = async (req: Request, res: Response) => {
 };
 
 const setOrderStatus = async (req: Request, res: Response) => {
-  const { user } = req as any;
-  const id = parseInt(req.params.id, 10);
+  const { user, role: { isMaster, isClient } } = req as any;
+  console.log(isClient, isMaster);
+  const orderId = parseInt(req.params.id, 10);
   const { status } = req.body;
   if (!validateSetOrderStatus(req, res)) {
     return;
@@ -90,16 +91,28 @@ const setOrderStatus = async (req: Request, res: Response) => {
     const orders = getConnection().getRepository(Order);
     const order = await orders.findOne({
       where: {
-        id,
+        id: orderId,
       },
     });
     if (!order) {
       res.status(404).json({ ok: false, error: 'Order not found!' });
       return;
     }
-    if (order.clientId !== user.id) {
+    if (isClient && order.clientId !== user.id) {
       res.status(403).json({ ok: false, error: 'It\'s not your order!' });
       return;
+    }
+    if (isMaster) {
+      const master = await getRepository(Master)
+        .findOne({
+          where: {
+            user,
+          },
+        });
+      if (order.master.id !== master.id) {
+        res.status(403).json({ ok: false, error: 'It\'s not your order!' });
+        return;
+      }
     }
     order.status = status;
     await orders.save(order);
