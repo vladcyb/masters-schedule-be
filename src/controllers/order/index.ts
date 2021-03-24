@@ -82,7 +82,6 @@ const createOrder = async (req: MyRequest, res: Response) => {
 
 const setOrderStatus = async (req: MyRequest, res: Response) => {
   const { user, role: { isMaster, isClient } } = req;
-  console.log(isClient, isMaster);
   const orderId = parseInt(req.params.id, 10);
   const { status } = req.body;
   if (!validateSetOrderStatus(req, res)) {
@@ -126,12 +125,19 @@ const setOrderStatus = async (req: MyRequest, res: Response) => {
 
 const getAll = async (req: MyRequest, res: Response) => {
   try {
-    const { user } = req;
-    const userRole = user.role;
+    const {
+      user,
+      role: {
+        isAdmin,
+        isMaster,
+        isOperator,
+        isClient,
+      },
+    } = req;
     const connection = getConnection();
     const ordersRepository = connection.getRepository(Order);
     const mastersRepository = connection.getRepository(Master);
-    if (userRole === UserRole.CLIENT) {
+    if (isClient) {
       const result = await ordersRepository
         .createQueryBuilder('order')
         .where({
@@ -145,7 +151,7 @@ const getAll = async (req: MyRequest, res: Response) => {
         ok: true,
         result,
       });
-    } else if (userRole === UserRole.ADMIN || userRole === UserRole.OPERATOR) {
+    } else if (isAdmin || isOperator) {
       const result = await ordersRepository
         .createQueryBuilder('order')
         .leftJoinAndSelect('order.services', 'service')
@@ -156,7 +162,7 @@ const getAll = async (req: MyRequest, res: Response) => {
         ok: true,
         result,
       });
-    } else if (userRole === UserRole.MASTER) {
+    } else if (isMaster) {
       const master = await mastersRepository.findOne({
         where: {
           user,
