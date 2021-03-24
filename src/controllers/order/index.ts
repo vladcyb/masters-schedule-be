@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { getConnection, getManager, getRepository } from 'typeorm';
 import { addHours, parseISO } from 'date-fns';
 import Order from '../../models/Order';
@@ -9,8 +9,9 @@ import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 import { OrderStatus } from '../../models/Order/enums';
 import { UserRole } from '../../models/User/types';
 import { sendError, sendResult } from '../../shared/methods';
+import { MyRequest } from '../../shared/types';
 
-const createOrder = async (req: Request, res: Response) => {
+const createOrder = async (req: MyRequest, res: Response) => {
   try {
     if (!validateCreateOrder(req, res)) {
       return;
@@ -20,7 +21,7 @@ const createOrder = async (req: Request, res: Response) => {
       address,
       services,
     } = req.body;
-    const { file: photo, user } = req as any;
+    const { file: photo, user } = req;
     if (user.role !== UserRole.CLIENT) {
       res.json(sendError('Only client may create orders.'));
       return;
@@ -79,8 +80,8 @@ const createOrder = async (req: Request, res: Response) => {
   }
 };
 
-const setOrderStatus = async (req: Request, res: Response) => {
-  const { user, role: { isMaster, isClient } } = req as any;
+const setOrderStatus = async (req: MyRequest, res: Response) => {
+  const { user, role: { isMaster, isClient } } = req;
   console.log(isClient, isMaster);
   const orderId = parseInt(req.params.id, 10);
   const { status } = req.body;
@@ -123,9 +124,9 @@ const setOrderStatus = async (req: Request, res: Response) => {
   }
 };
 
-const getAll = async (req: Request, res: Response) => {
+const getAll = async (req: MyRequest, res: Response) => {
   try {
-    const { user } = req as any;
+    const { user } = req;
     const userRole = user.role;
     const connection = getConnection();
     const ordersRepository = connection.getRepository(Order);
@@ -183,10 +184,9 @@ const getAll = async (req: Request, res: Response) => {
   }
 };
 
-const setStartDate = async (req: Request, res: Response) => {
+const setStartDate = async (req: MyRequest, res: Response) => {
   try {
-    const { date } = req.body;
-    const { user } = req as any;
+    const { user, body: { date } } = req;
     const { id } = req.params;
     if (user.role !== UserRole.OPERATOR && user.role !== UserRole.ADMIN) {
       res.status(403).json(sendError(FORBIDDEN));
@@ -218,12 +218,12 @@ const setStartDate = async (req: Request, res: Response) => {
   }
 };
 
-const setServices = async (req: Request, res: Response) => {
+const setServices = async (req: MyRequest, res: Response) => {
   try {
     const {
       user,
       body: { services },
-    } = req as any;
+    } = req;
 
     /* checking permissions */
     if (user.role !== UserRole.OPERATOR && user.role !== UserRole.ADMIN) {
@@ -277,7 +277,7 @@ const setServices = async (req: Request, res: Response) => {
   }
 };
 
-export const setMaster = async (req: Request, res: Response) => {
+export const setMaster = async (req: MyRequest, res: Response) => {
   try {
     const { id, masterId } = req.params;
     if (!id) {

@@ -1,10 +1,11 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { getConnection } from 'typeorm';
 import { SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
 import User from '../../models/User';
+import { MyRequest } from '../../shared/types';
 
-export const getMe = async (req: Request, res: Response) => {
-  const { user } = req as any;
+export const getMe = async (req: MyRequest, res: Response) => {
+  const { user } = req;
   try {
     const me = await getConnection()
       .getRepository(User)

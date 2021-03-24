@@ -1,17 +1,18 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { getConnection } from 'typeorm';
 import Specialization from '../../models/Specialization';
 import { SERVER_ERROR } from '../../shared/constants';
 import { validateCreateSpecialization, validateUpdateSpecialization } from './validate';
 import { UserRole } from '../../models/User/types';
 import { sendError } from '../../shared/methods';
+import { MyRequest } from '../../shared/types';
 
-const create = async (req: Request, res: Response) => {
+const create = async (req: MyRequest, res: Response) => {
   try {
     if (!validateCreateSpecialization(req, res)) {
       return;
     }
-    const { user } = req as any;
+    const { user } = req;
     const {
       title,
     } = req.body;
@@ -44,7 +45,7 @@ const create = async (req: Request, res: Response) => {
   }
 };
 
-const getSpecializations = async (req: Request, res: Response) => {
+const getSpecializations = async (req: MyRequest, res: Response) => {
   try {
     const result = await getConnection()
       .getRepository(Specialization)
@@ -56,11 +57,11 @@ const getSpecializations = async (req: Request, res: Response) => {
   }
 };
 
-const update = async (req: Request, res: Response) => {
+const update = async (req: MyRequest, res: Response) => {
   if (!validateUpdateSpecialization(req, res)) {
     return;
   }
-  const { user } = req as any;
+  const { user } = req;
   const {
     id, title, icon,
   } = req.body;

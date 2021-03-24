@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { getConnection, getManager } from 'typeorm';
 import LocationType from '../../models/LocationType';
 import Location from '../../models/Location';
@@ -6,8 +6,9 @@ import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 import { validateCreateLocation, validateEditLocation } from './validate';
 import { UserRole } from '../../models/User/types';
 import { sendError } from '../../shared/methods';
+import { MyRequest } from '../../shared/types';
 
-const create = async (req: Request, res: Response) => {
+const create = async (req: MyRequest, res: Response) => {
   try {
     if (!validateCreateLocation(req, res)) {
       return;
@@ -18,7 +19,7 @@ const create = async (req: Request, res: Response) => {
       coordinates,
       typeId,
     } = req.body;
-    const { user } = req as any;
+    const { user } = req;
 
     if (user.role !== UserRole.ADMIN) {
       res.status(403).json(sendError(FORBIDDEN));
@@ -66,7 +67,7 @@ const create = async (req: Request, res: Response) => {
   }
 };
 
-const getLocations = async (req: Request, res: Response) => {
+const getLocations = async (req: MyRequest, res: Response) => {
   try {
     const locations = await getConnection()
       .getTreeRepository(Location)
@@ -78,8 +79,8 @@ const getLocations = async (req: Request, res: Response) => {
   }
 };
 
-const deleteLocation = async (req: Request, res: Response) => {
-  const { user } = req as any;
+const deleteLocation = async (req: MyRequest, res: Response) => {
+  const { user } = req;
   if (user.role !== UserRole.ADMIN) {
     res.status(403).json(sendError(FORBIDDEN));
     return;
@@ -125,14 +126,14 @@ const deleteLocation = async (req: Request, res: Response) => {
   }
 };
 
-const edit = async (req: Request, res: Response) => {
+const edit = async (req: MyRequest, res: Response) => {
   try {
     const {
       title,
       coordinates,
       typeId,
     } = req.body;
-    if ((req as any).user.role !== UserRole.ADMIN) {
+    if (req.user.role !== UserRole.ADMIN) {
       res.status(403).json(sendError(FORBIDDEN));
       return;
     }

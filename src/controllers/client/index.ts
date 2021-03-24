@@ -1,12 +1,13 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { getConnection } from 'typeorm';
 import Order from '../../models/Order';
 import { UserRole } from '../../models/User/types';
 import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 import { sendError } from '../../shared/methods';
+import { MyRequest } from '../../shared/types';
 
-const getOrders = async (req: Request, res: Response) => {
-  const { user } = (req as any);
+const getOrders = async (req: MyRequest, res: Response) => {
+  const { user } = req;
   if (user.role !== UserRole.CLIENT) {
     res.status(403).json(sendError(FORBIDDEN));
     return;

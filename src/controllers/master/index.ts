@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { getConnection, getManager } from 'typeorm';
 import Master from '../../models/Master';
 import Schedule from '../../models/Schedule';
@@ -6,14 +6,15 @@ import { UserRole } from '../../models/User/types';
 import { FORBIDDEN, SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
 import { validateSetMasterSchedule } from './validate';
 import { sendError } from '../../shared/methods';
+import { MyRequest } from '../../shared/types';
 
-const setSchedule = async (req: Request, res: Response) => {
+const setSchedule = async (req: MyRequest, res: Response) => {
   let result;
   try {
     result = await getManager()
       .transaction(async (manager) => {
         const hours = req.body.hours.replace(/\s/g, '');
-        const { user } = req as any;
+        const { user } = req;
         const master = await manager.findOne(Master, {
           where: { user },
         });
@@ -53,8 +54,8 @@ const setSchedule = async (req: Request, res: Response) => {
   });
 };
 
-const getSchedule = async (req: Request, res: Response) => {
-  const { user } = req as any;
+const getSchedule = async (req: MyRequest, res: Response) => {
+  const { user } = req;
   try {
     if (user.role !== UserRole.MASTER) {
       res.status(403).json({
@@ -86,7 +87,7 @@ const getSchedule = async (req: Request, res: Response) => {
   }
 };
 
-const getAll = async (req: Request, res: Response) => {
+const getAll = async (req: MyRequest, res: Response) => {
   try {
     const result = await getConnection()
       .getRepository(Master)

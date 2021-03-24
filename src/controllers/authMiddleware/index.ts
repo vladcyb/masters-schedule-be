@@ -1,12 +1,13 @@
 import jwt from 'jsonwebtoken';
 import { getConnection } from 'typeorm';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import User from '../../models/User';
 import { SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
 import { sendError } from '../../shared/methods';
 import { UserRole } from '../../models/User/types';
+import { MyRequest } from '../../shared/types';
 
-const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+const authMiddleware = async (req: MyRequest, res: Response, next: NextFunction) => {
   const { SECRET, ALLOW_MANY_SESSIONS } = process.env;
   try {
     const { token } = req.session as any;
@@ -28,8 +29,8 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
         res.status(401).json(sendError(UNAUTHORIZED));
         return;
       }
-      (req as any).user = user;
-      (req as any).role = {
+      req.user = user;
+      req.role = {
         isAdmin: user.role === UserRole.ADMIN,
         isMaster: user.role === UserRole.MASTER,
         isOperator: user.role === UserRole.OPERATOR,

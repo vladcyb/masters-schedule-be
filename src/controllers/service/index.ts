@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { getConnection, getManager } from 'typeorm';
 import Specialization from '../../models/Specialization';
 import Service from '../../models/Service';
@@ -6,8 +6,9 @@ import { SERVER_ERROR } from '../../shared/constants';
 import { validateCreateService } from '../../routes/service/validate';
 import { UserRole } from '../../models/User/types';
 import { sendError } from '../../shared/methods';
+import { MyRequest } from '../../shared/types';
 
-const create = async (req: Request, res: Response) => {
+const create = async (req: MyRequest, res: Response) => {
   try {
     if (!validateCreateService(req, res)) {
       return;
@@ -18,7 +19,7 @@ const create = async (req: Request, res: Response) => {
       duration,
       specializationId,
     } = req.body;
-    const { user } = req as any;
+    const { user } = req;
     if (user.role !== UserRole.ADMIN) {
       res.json(sendError('Only admin may create services!'));
       return;
@@ -53,7 +54,7 @@ const create = async (req: Request, res: Response) => {
   }
 };
 
-const getAll = async (req: Request, res: Response) => {
+const getAll = async (req: MyRequest, res: Response) => {
   try {
     const result = await getConnection().getRepository(Service).find({
       relations: ['specialization'],
