@@ -192,9 +192,17 @@ const getAll = async (req: MyRequest, res: Response) => {
 
 const setStartDate = async (req: MyRequest, res: Response) => {
   try {
-    const { user, body: { date } } = req;
+    const {
+      user,
+      body: { date },
+      role: {
+        isClient,
+        isAdmin,
+        isOperator,
+      },
+    } = req;
     const { id } = req.params;
-    if (user.role !== UserRole.OPERATOR && user.role !== UserRole.ADMIN) {
+    if (!(isOperator || isAdmin || isClient)) {
       res.status(403).json(sendError(FORBIDDEN));
       return;
     }
