@@ -65,4 +65,8 @@ export default class Order {
   // адрес
   @Column()
   address: string;
+
+  // стоимость (сумма всех услуг)
+  @Column({ default: 0 })
+  price: number;
 }

@@ -28,7 +28,7 @@ const createOrder = async (req: MyRequest, res: Response) => {
         isClient,
       },
     } = req;
-    if (isClient) {
+    if (!isClient) {
       res.json(sendError('Only client may create orders.'));
       return;
     }
@@ -36,6 +36,7 @@ const createOrder = async (req: MyRequest, res: Response) => {
     await getManager().transaction(async (manager) => {
       let serviceNotFound = false;
       const servicesToSave = [];
+      let price = 0;
       if (typeof services !== 'undefined') {
         const serviceIds = JSON.parse(services);
         for (let i = 0; i < serviceIds.length; i += 1) {
@@ -51,6 +52,7 @@ const createOrder = async (req: MyRequest, res: Response) => {
             serviceNotFound = true;
           } else {
             servicesToSave.push(foundService);
+            price += foundService.price;
           }
         }
       }
@@ -64,6 +66,7 @@ const createOrder = async (req: MyRequest, res: Response) => {
       order.client = user;
       order.status = OrderStatus.PENDING;
       order.services = servicesToSave;
+      order.price = price;
       await manager.save(order);
       res.json({
         ok: true,
@@ -77,6 +80,7 @@ const createOrder = async (req: MyRequest, res: Response) => {
           status: order.status,
           address: order.address,
           services: order.services,
+          price: order.price,
         },
       });
     });
