@@ -6,6 +6,7 @@ export enum OrderStatus {
   ABORTED,
   ON_REWORK,
   PENDING_FOR_ACCEPTING,
+  DENIED,
 }
 // eslint-disable-next-line no-shadow
 export enum MasterStatus {
