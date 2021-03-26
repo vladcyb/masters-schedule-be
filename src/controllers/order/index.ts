@@ -292,6 +292,12 @@ const setServices = async (req: MyRequest, res: Response) => {
           .toISOString();
       }
 
+      /* пересчет стоимости заказа */
+      let price = 0;
+      for (let i = 0; i < servicesToSave.length; i += 1) {
+        price += servicesToSave[i].price;
+      }
+      order.price = price;
       const result = await manager.save(order);
       res.json(sendResult(result));
     });
