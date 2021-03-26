@@ -24,12 +24,8 @@ export const validateCreateService = (req: Request, res: Response): boolean => {
     res.json(sendError('Enter `price`!'));
     return false;
   }
-  if (typeof price !== 'string') {
-    res.json(sendError('`price` must be of type string!'));
-    return false;
-  }
-  if (!price.length) {
-    res.json(sendError('Enter `price`!'));
+  if (typeof price !== 'number') {
+    res.json(sendError('`price` must be of type number!'));
     return false;
   }
   if (typeof duration === 'undefined') {

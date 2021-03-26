@@ -17,7 +17,7 @@ export default class Service {
 
   // стоимость
   @Column()
-  price: string;
+  price: number;
 
   // длительность (в часах)
   @Column({ nullable: true })
