@@ -126,7 +126,7 @@ const setOrderStatus = async (req: MyRequest, res: Response) => {
     }
     order.status = status;
     await orders.save(order);
-    res.json({ ok: true, result: order });
+    res.json({ ok: true });
   } catch (e) {
     console.log(e);
     res.json(sendError(SERVER_ERROR));
