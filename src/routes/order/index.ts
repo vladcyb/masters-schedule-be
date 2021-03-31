@@ -13,6 +13,9 @@ orderRoutes.put('/:id/setStartDate', orderController.setStartDate);
 orderRoutes.put('/:id/setServices', orderController.setServices);
 orderRoutes.put('/:id/setMaster/:masterId', orderController.setMaster);
 
+/* действия, связанные со статусом заказа */
+orderRoutes.put('/:id/deny', orderController.deny);
+
 orderRoutes.get('/', orderController.getAll);
 
 export default orderRoutes;

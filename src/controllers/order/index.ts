@@ -4,7 +4,7 @@ import { addHours, parseISO } from 'date-fns';
 import Order from '../../models/Order';
 import Service from '../../models/Service';
 import Master from '../../models/Master';
-import { validateSetOrderStatus, validateCreateOrder } from './validate';
+import { validateCreateOrder, validateSetOrderStatus } from './validate';
 import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 import { OrderStatus } from '../../models/Order/enums';
 import { UserRole } from '../../models/User/types';
@@ -349,6 +349,38 @@ export const setMaster = async (req: MyRequest, res: Response) => {
   }
 };
 
+const deny = async (req: MyRequest, res: Response) => {
+  const {
+    role,
+    params: {
+      id,
+    },
+  } = req;
+  try {
+    if (!role.isOperator) {
+      res.json(sendError(FORBIDDEN));
+      return;
+    }
+    const orders = getRepository(Order);
+    const order = await orders
+      .findOne({
+        where: {
+          id,
+        },
+      });
+    if (!order) {
+      res.status(404).json(sendError(FORBIDDEN));
+      return;
+    }
+    order.status = OrderStatus.DENIED;
+    await orders.save(order);
+    res.json({ ok: true });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
+  }
+};
+
 const orderController = {
   createOrder,
   setOrderStatus,
@@ -356,6 +388,9 @@ const orderController = {
   setStartDate,
   setServices,
   setMaster,
+
+  /* действия, связанные со статусом заказа */
+  deny,
 };
 
 export default orderController;
