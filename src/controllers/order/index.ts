@@ -315,7 +315,7 @@ const deny = async (req: MyRequest, res: Response) => {
   } = req;
   try {
     if (!role.isOperator) {
-      res.json(sendError(FORBIDDEN));
+      res.status(403).json(sendError(FORBIDDEN));
       return;
     }
     const orders = getRepository(Order);
@@ -326,7 +326,7 @@ const deny = async (req: MyRequest, res: Response) => {
         },
       });
     if (!order) {
-      res.status(404).json(sendError(FORBIDDEN));
+      res.status(404).json(sendError('Order not found!'));
       return;
     }
     order.status = OrderStatus.DENIED;
