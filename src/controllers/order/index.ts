@@ -4,7 +4,7 @@ import { addHours, parseISO } from 'date-fns';
 import Order from '../../models/Order';
 import Service from '../../models/Service';
 import Master from '../../models/Master';
-import { validateCreateOrder, validateSetOrderStatus } from './validate';
+import { validateCreateOrder } from './validate';
 import { FORBIDDEN, SERVER_ERROR } from '../../shared/constants';
 import { OrderStatus } from '../../models/Order/enums';
 import { UserRole } from '../../models/User/types';
@@ -87,49 +87,6 @@ const createOrder = async (req: MyRequest, res: Response) => {
   } catch (e) {
     console.log(e);
     res.status(500).json(sendError(SERVER_ERROR));
-  }
-};
-
-const setOrderStatus = async (req: MyRequest, res: Response) => {
-  const { user, role: { isMaster, isClient } } = req;
-  const orderId = parseInt(req.params.id, 10);
-  const { status } = req.body;
-  if (!validateSetOrderStatus(req, res)) {
-    return;
-  }
-  try {
-    const orders = getConnection().getRepository(Order);
-    const order = await orders.findOne({
-      where: {
-        id: orderId,
-      },
-    });
-    if (!order) {
-      res.status(404).json({ ok: false, error: 'Order not found!' });
-      return;
-    }
-    if (isClient && order.clientId !== user.id) {
-      res.status(403).json({ ok: false, error: 'It\'s not your order!' });
-      return;
-    }
-    if (isMaster) {
-      const master = await getRepository(Master)
-        .findOne({
-          where: {
-            user,
-          },
-        });
-      if (order.master.id !== master.id) {
-        res.status(403).json({ ok: false, error: 'It\'s not your order!' });
-        return;
-      }
-    }
-    order.status = status;
-    await orders.save(order);
-    res.json({ ok: true });
-  } catch (e) {
-    console.log(e);
-    res.json(sendError(SERVER_ERROR));
   }
 };
 
@@ -383,7 +340,6 @@ const deny = async (req: MyRequest, res: Response) => {
 
 const orderController = {
   createOrder,
-  setOrderStatus,
   getAll,
   setStartDate,
   setServices,
