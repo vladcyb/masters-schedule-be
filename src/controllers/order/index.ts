@@ -417,6 +417,10 @@ const accept = async (req: MyRequest, res: Response) => {
       res.status(403).json(sendError(FORBIDDEN));
       return;
     }
+    if (order.status !== OrderStatus.PENDING_FOR_ACCEPTING) {
+      res.json(sendError('Ошибка!'));
+      return;
+    }
     order.status = OrderStatus.DONE;
     await orders.save(order);
     res.json({ ok: true });
