@@ -312,9 +312,10 @@ const deny = async (req: MyRequest, res: Response) => {
     params: {
       id,
     },
+    user,
   } = req;
   try {
-    if (!role.isOperator) {
+    if (!(role.isOperator || role.isMaster)) {
       res.status(403).json(sendError(FORBIDDEN));
       return;
     }
@@ -328,6 +329,23 @@ const deny = async (req: MyRequest, res: Response) => {
     if (!order) {
       res.status(404).json(sendError('Order not found!'));
       return;
+    }
+    /* Проверка на то, что заказ принадлежит мастеру */
+    if (role.isMaster) {
+      if (!order.master) {
+        res.status(403).json(sendError(FORBIDDEN));
+        return;
+      }
+      const masters = getRepository(Master);
+      const master = await masters.findOne({
+        where: {
+          user,
+        },
+      });
+      if (master.id !== order.master.id) {
+        res.json(sendError(FORBIDDEN));
+        return;
+      }
     }
     order.status = OrderStatus.DENIED;
     await orders.save(order);
