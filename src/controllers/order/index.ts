@@ -343,7 +343,7 @@ const deny = async (req: MyRequest, res: Response) => {
         },
       });
       if (master.id !== order.master.id) {
-        res.json(sendError(FORBIDDEN));
+        res.status(403).json(sendError(FORBIDDEN));
         return;
       }
     }
