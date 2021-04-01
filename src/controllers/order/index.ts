@@ -387,6 +387,7 @@ const abort = async (req: MyRequest, res: Response) => {
     }
     order.status = OrderStatus.ABORTED;
     await orders.save(order);
+    res.json({ ok: true });
   } catch (e) {
     console.log(e);
     res.status(500).json(sendError(SERVER_ERROR));
