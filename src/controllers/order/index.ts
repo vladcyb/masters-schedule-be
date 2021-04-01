@@ -394,6 +394,38 @@ const abort = async (req: MyRequest, res: Response) => {
   }
 };
 
+const accept = async (req: MyRequest, res: Response) => {
+  try {
+    const {
+      user,
+      role,
+      params: {
+        id,
+      },
+    } = req;
+    if (!role.isClient) {
+      res.status(403).json(sendError(FORBIDDEN));
+      return;
+    }
+    const orders = getRepository(Order);
+    const order = await orders.findOne({
+      where: {
+        id,
+      },
+    });
+    if (order.clientId !== user.id) {
+      res.status(403).json(sendError(FORBIDDEN));
+      return;
+    }
+    order.status = OrderStatus.DONE;
+    await orders.save(order);
+    res.json({ ok: true });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
+  }
+};
+
 const orderController = {
   createOrder,
   getAll,
@@ -404,6 +436,7 @@ const orderController = {
   /* действия, связанные со статусом заказа */
   deny,
   abort,
+  accept,
 };
 
 export default orderController;
