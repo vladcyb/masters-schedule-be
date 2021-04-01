@@ -356,6 +356,43 @@ const deny = async (req: MyRequest, res: Response) => {
   }
 };
 
+const abort = async (req: MyRequest, res: Response) => {
+  try {
+    const {
+      role,
+      user,
+      params: {
+        id,
+      },
+    } = req;
+    if (!role.isClient) {
+      res.status(403).json(sendError(FORBIDDEN));
+      return;
+    }
+
+    const orders = getRepository(Order);
+    const order = await orders
+      .findOne({
+        where: {
+          id,
+        },
+      });
+    if (!order) {
+      res.status(404).json(sendError('Заказ не найден!'));
+      return;
+    }
+    if (order.clientId !== user.id) {
+      res.status(403).json(sendError(FORBIDDEN));
+      return;
+    }
+    order.status = OrderStatus.ABORTED;
+    await orders.save(order);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
+  }
+};
+
 const orderController = {
   createOrder,
   getAll,
@@ -365,6 +402,7 @@ const orderController = {
 
   /* действия, связанные со статусом заказа */
   deny,
+  abort,
 };
 
 export default orderController;

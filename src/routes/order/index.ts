@@ -14,6 +14,7 @@ orderRoutes.put('/:id/setMaster/:masterId', orderController.setMaster);
 
 /* действия, связанные со статусом заказа */
 orderRoutes.put('/:id/deny', orderController.deny);
+orderRoutes.put('/:id/abort', orderController.abort);
 
 orderRoutes.get('/', orderController.getAll);
 
