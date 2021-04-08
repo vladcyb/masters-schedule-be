@@ -193,12 +193,48 @@ const deleteSpecialization = async (req: MyRequest, res: Response) => {
   }
 };
 
+const addSpecialization = async (req: MyRequest, res: Response) => {
+  try {
+    const masterId = parseInt(req.params.id, 10);
+    const specializationId = parseInt(req.params.specId, 10);
+
+    const masters = getRepository(Master);
+
+    const master = await masters.findOne({
+      where: {
+        id: masterId,
+      },
+      relations: ['specializations'],
+    });
+    if (!master) {
+      res.status(404).json(sendError('Master not found!'));
+      return;
+    }
+    const specialization = await getRepository(Specialization).findOne({
+      where: {
+        id: specializationId,
+      },
+    });
+    if (!specialization) {
+      res.status(404).json(sendError('Specialization not found!'));
+      return;
+    }
+    master.specializations.push(specialization);
+    await masters.save(master);
+    res.json(sendResult(master));
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
+  }
+};
+
 const masterController = {
   setSchedule,
   getSchedule,
   getAll,
   setSpecializations,
   deleteSpecialization,
+  addSpecialization,
 };
 
 export default masterController;
