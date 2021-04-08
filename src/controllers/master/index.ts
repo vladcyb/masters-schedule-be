@@ -2,9 +2,10 @@ import { Response } from 'express';
 import { getConnection, getManager } from 'typeorm';
 import Master from '../../models/Master';
 import Schedule from '../../models/Schedule';
+import Specialization from '../../models/Specialization';
 import { UserRole } from '../../models/User/types';
 import { FORBIDDEN, SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
-import { validateSetMasterSchedule } from './validate';
+import { validateSetMasterSchedule, validateSetSpecializations } from './validate';
 import { sendError } from '../../shared/methods';
 import { MyRequest } from '../../shared/types';
 
@@ -104,10 +105,64 @@ const getAll = async (req: MyRequest, res: Response) => {
   }
 };
 
+export const setSpecializations = async (req: MyRequest, res: Response) => {
+  try {
+    if (!req.role.isResponsible) {
+      res.json(FORBIDDEN);
+      return;
+    }
+    if (!validateSetSpecializations(req, res)) {
+      return;
+    }
+    const id = parseInt(req.params.id, 10);
+    const { specializations } = req.body;
+
+    await getManager().transaction(async (manager) => {
+      const master = await manager.findOne(Master, {
+        where: {
+          id,
+        },
+      });
+
+      if (!master) {
+        res.status(404).json(sendError('Master not found!'));
+        return;
+      }
+
+      /* Если переданный в запросе массив с ID специализаций пустой */
+      if (!specializations.length) {
+        master.specializations = [];
+        await manager.save(master);
+        res.json({
+          ok: true,
+          result: master,
+        });
+        return;
+      }
+
+      master.specializations = await manager
+        .createQueryBuilder(Specialization, 'specialization')
+        .where('specialization.id IN (:...specializations)', {
+          specializations,
+        })
+        .getMany();
+      await manager.save(master);
+      res.json({
+        ok: true,
+        result: master,
+      });
+    });
+  } catch (e) {
+    console.log(e);
+    res.json(sendError(SERVER_ERROR));
+  }
+};
+
 const masterController = {
   setSchedule,
   getSchedule,
   getAll,
+  setSpecializations,
 };
 
 export default masterController;
