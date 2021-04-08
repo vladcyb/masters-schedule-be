@@ -1,12 +1,12 @@
 import { Response } from 'express';
-import { getConnection, getManager } from 'typeorm';
+import { getConnection, getManager, getRepository } from 'typeorm';
 import Master from '../../models/Master';
 import Schedule from '../../models/Schedule';
 import Specialization from '../../models/Specialization';
 import { UserRole } from '../../models/User/types';
 import { FORBIDDEN, SERVER_ERROR, UNAUTHORIZED } from '../../shared/constants';
 import { validateSetMasterSchedule, validateSetSpecializations } from './validate';
-import { sendError } from '../../shared/methods';
+import { sendError, sendResult } from '../../shared/methods';
 import { MyRequest } from '../../shared/types';
 
 const setSchedule = async (req: MyRequest, res: Response) => {
@@ -158,11 +158,47 @@ export const setSpecializations = async (req: MyRequest, res: Response) => {
   }
 };
 
+const deleteSpecialization = async (req: MyRequest, res: Response) => {
+  try {
+    const { role } = req;
+    if (!(role.isResponsible || role.isAdmin)) {
+      res.status(403).json(sendError(FORBIDDEN));
+      return;
+    }
+    const masterId = parseInt(req.params.id, 10);
+    const specId = parseInt(req.params.specId, 10);
+    const masters = getRepository(Master);
+    const master = await masters.findOne({
+      where: {
+        id: masterId,
+      },
+      relations: ['specializations'],
+    });
+    if (!master) {
+      res.status(404).json(sendError('Error: master not found!'));
+      return;
+    }
+    const { specializations } = master;
+    const index = specializations.findIndex((spec) => spec.id === specId);
+    if (index === -1) {
+      res.json(sendResult(specializations));
+      return;
+    }
+    specializations.splice(index, 1);
+    await masters.save(master);
+    res.json(sendResult(specializations));
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(sendError(SERVER_ERROR));
+  }
+};
+
 const masterController = {
   setSchedule,
   getSchedule,
   getAll,
   setSpecializations,
+  deleteSpecialization,
 };
 
 export default masterController;
