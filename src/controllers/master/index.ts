@@ -223,7 +223,7 @@ const addSpecialization = async (req: MyRequest, res: Response) => {
       master.specializations.push(specialization);
       await masters.save(master);
     }
-    res.json(sendResult(master));
+    res.json(sendResult(specialization));
   } catch (e) {
     console.log(e);
     res.status(500).json(sendError(SERVER_ERROR));
