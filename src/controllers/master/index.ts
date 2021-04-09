@@ -219,8 +219,10 @@ const addSpecialization = async (req: MyRequest, res: Response) => {
       res.status(404).json(sendError('Specialization not found!'));
       return;
     }
-    master.specializations.push(specialization);
-    await masters.save(master);
+    if (master.specializations.every((spec) => spec.id !== specializationId)) {
+      master.specializations.push(specialization);
+      await masters.save(master);
+    }
     res.json(sendResult(master));
   } catch (e) {
     console.log(e);
